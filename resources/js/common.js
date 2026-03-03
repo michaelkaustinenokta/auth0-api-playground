@@ -771,11 +771,17 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 	var columnsArray = [];
 
 	//id;clientId;clientSecret;clientUrl;displayName;audience;scope;organization (title = clientUrl)
-	$.get('/api/environments', function(data) {
-		setupEnvironments(data)
-	})
+	// Try new dynamic config endpoint, fallback to static environments
+	$.get('/api/config').done(function(data) {
+		setupEnvironments(data, true); // Pass flag indicating dynamic config
+	}).fail(function() {
+		// Fallback to original endpoint if new one not available
+		$.get('/api/environments', function(data) {
+			setupEnvironments(data, false);
+		});
+	});
 
-	function setupEnvironments(configDataToSetup) {
+	function setupEnvironments(configDataToSetup, isDynamic) {
 		
 		/*configDataToSetup = `kaustinen-demo;d5AuU6aAoQq4G8tPeWlHNMg9mQJ5Vr1y;ZGHof2CjyNfw6X6Q0s72J-XY71fNYKJWy7TcPQGztei49rDZunERP7RWWsJ5sjwq;https://kaustinen.cic-demo-platform.auth0app.com;Demo;General demo environment;https://localhost/auth0api;offline openid email profile read:appointments;http://localhost/auth0;
 		pkce-test;d7wpRNvlezrA0FfSNYcHfAfELN6mKAW6;kBMtLc6j79XyvUrgaxjWuDc1BXebYbOS9lA2AEChIr8fWnWLARWr328qUB2Li46C;https://kaustinen.cic-demo-platform.auth0app.com;PKCE;Proof Key for Code Exchange (PKCE);https://pulse.com/api1;offline openid email profile create:pulse-report read:pulse-report;http://localhost/auth0;
@@ -822,6 +828,12 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 			  environmentAudience = columns[6].replace("\t","")
 			  environmentScope = columns[7].replace("\t","")
 			  environmentReturnUrl = columns[8].replace("\t","")
+
+			  // If dynamic config and returnUrl is detection marker, use current origin
+			  if (isDynamic && environmentReturnUrl === '__DETECT__') {
+			      environmentReturnUrl = window.location.origin;
+			  }
+
 			  environmentOrganization = columns[9].replace("\t","")
 			  environmentCompanyLogoImg = ""
 			  environmentCompanyWallpaperImg = ""
@@ -1173,6 +1185,12 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 			     //console.log(primaryColor)
 
 			     var value = attrib.value;
+
+			     // Auto-detect returnUrl if marker is present
+			     if (name === 'returnUrl' && value === '__DETECT__') {
+			         value = window.location.origin;
+			     }
+
 			     $("#"+name).val(value).change()
 
 			    if(name == "companyLogoImg" && $("#companyLogoImg") != "") {

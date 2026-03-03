@@ -512,6 +512,7 @@ background: #f3bd09; border-radius: 8px; padding: 8px; font-size: 10px; margin-b
 
 .primaryColor {
 	background: #44c7f4;
+	background: rgb(243, 189, 9);
 }
 
 .selectedEnvironmentCss {
@@ -539,4 +540,6 @@ background: #f3bd09; border-radius: 8px; padding: 8px; font-size: 10px; margin-b
 	border: 0.5em solid white;
 }*/
 
-
+.secondaryColor {
+	background: rgb(68, 199, 244);
+}

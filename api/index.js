@@ -447,6 +447,48 @@ app.get('/api/environments', async (_req, res, next) => {
 });
 
 /**
+ * Dynamic config endpoint - adapts returnUrl to hosting environment
+ */
+app.get('/api/config', async (_req, res, next) => {
+  try {
+    const fs = require('fs').promises;
+    const path = require('path');
+
+    // Read the .env file from api directory
+    const envPath = path.join(__dirname, '.env');
+    let envContent = await fs.readFile(envPath, 'utf8');
+
+    // Determine appropriate returnUrl based on environment
+    // Always use __DETECT__ to signal frontend to use window.location.origin
+    // This works for:
+    // - Localhost (any port)
+    // - Vercel production (via alias URL like auth0-orcin.vercel.app)
+    // - Vercel preview (via preview URL)
+    // - Custom domains
+    const returnUrl = '__DETECT__';
+
+    // Replace all returnUrl values (column 8) with environment-aware value
+    const lines = envContent.split('\n');
+    const adaptedLines = lines.map(line => {
+      if (line.trim() && !line.startsWith('#')) {
+        const parts = line.split(';');
+        if (parts.length > 8) {
+          // Replace column 8 (returnUrl) with dynamic value
+          parts[8] = returnUrl;
+          return parts.join(';');
+        }
+      }
+      return line;
+    });
+
+    res.type('text/plain').send(adaptedLines.join('\n'));
+  } catch (error) {
+    console.error('Error reading config file:', error);
+    next(error);
+  }
+});
+
+/**
  * Main proxy endpoint (matches original PHP POST endpoint)
  */
 app.post('/api/proxy', async (req, res, next) => {
