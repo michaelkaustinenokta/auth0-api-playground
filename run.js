@@ -57,7 +57,24 @@ const RATE_LIMIT_MAX = parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10
 
 // CORS - Allow requests from different origins (for AJAX from Apache/other ports)
 app.use(cors({
-  origin: true, // Allow all origins in development
+  origin: process.env.NODE_ENV === 'production'
+    ? (origin, callback) => {
+        // In production, allow specific domains
+        const allowedOrigins = [
+          'https://auth0app.com',
+          'https://auth.kausti.com'
+        ];
+
+        // Allow Vercel preview and production deployments
+        if (origin && origin.match(/^https:\/\/.*\.vercel\.app$/)) {
+          callback(null, true);
+        } else if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      }
+    : true, // Allow all origins in development
   credentials: true
 }));
 
@@ -109,6 +126,18 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use((req, res, next) => {
   const timestamp = new Date().toISOString();
   console.log(`[${timestamp}] ${req.method} ${req.path}`);
+  next();
+});
+
+// Block direct access to .env files via HTTP (SECURITY)
+app.use((req, res, next) => {
+  if (req.path.includes('/.env')) {
+    console.warn(`[SECURITY] Blocked access to .env file: ${req.path}`);
+    return res.status(403).json({
+      error: 'Access denied',
+      code: 'FORBIDDEN'
+    });
+  }
   next();
 });
 

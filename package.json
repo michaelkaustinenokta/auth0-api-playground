@@ -5,7 +5,8 @@
   "main": "run.js",
   "scripts": {
     "start": "node run.js",
-    "dev": "nodemon run.js"
+    "dev": "nodemon run.js",
+    "vercel-build": "echo 'No build step needed'"
   },
   "keywords": [
     "auth0",
