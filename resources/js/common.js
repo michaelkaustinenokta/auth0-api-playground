@@ -664,7 +664,9 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 
 		$("#configDiv input").on('paste keyup',function(e){
 			createProfileButtons()
-			$(selectedEnvironmentId).click()
+			//configdiv error
+			triggerAuthTokenChange()
+			//$(selectedEnvironmentId).click()
 		});
 
 		/*$("a").on('click',function(e){
@@ -1269,7 +1271,7 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
   
 		});
 
-		$.ajax({
+		/*$.ajax({
             url: "test.php",
             type: "get",
             data: {scanForCss: "true"} ,
@@ -1287,7 +1289,7 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
             error: function(jqXHR, textStatus, errorThrown) {
                //console.log(textStatus, errorThrown);
             }
-        });
+        });*/
 
         $("#cssSelector").on('change', function() {
         	console.log(this.value)
