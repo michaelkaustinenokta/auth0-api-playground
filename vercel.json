@@ -1,8 +1,20 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "/api"
+    },
+    {
+      "source": "/health",
+      "destination": "/api"
+    },
+    {
+      "source": "/test.php",
+      "destination": "/api"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/run.js"
+      "destination": "/api"
     }
   ]
 }
