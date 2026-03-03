@@ -61,8 +61,33 @@ app.use(cors({
   credentials: true
 }));
 
-// Security headers
-app.use(helmet());
+// Security headers with CSP configured to allow external images
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "blob:",
+        "https:",
+        "http:",
+        "*.kausti.com",
+        "*.storyblok.com",
+        "*.researchworld.com",
+        "*.jyskblueline.com",
+        "*.mynewsdesk.com"
+      ],
+      fontSrc: ["'self'", "data:"],
+      connectSrc: ["'self'", "http://localhost:*", "https:"],
+      frameSrc: ["'none'"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: []
+    }
+  }
+}));
 
 // Parse JSON bodies with size limit
 app.use(express.json({ limit: '1mb' }));
@@ -70,15 +95,15 @@ app.use(express.json({ limit: '1mb' }));
 // Parse URL-encoded bodies (for legacy compatibility)
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: RATE_LIMIT_WINDOW,
-  max: RATE_LIMIT_MAX,
-  message: { error: 'Too many requests, please try again later.', code: 'RATE_LIMIT_EXCEEDED' },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use(limiter);
+// Rate limiting - DISABLED for development/testing
+// const limiter = rateLimit({
+//   windowMs: RATE_LIMIT_WINDOW,
+//   max: RATE_LIMIT_MAX,
+//   message: { error: 'Too many requests, please try again later.', code: 'RATE_LIMIT_EXCEEDED' },
+//   standardHeaders: true,
+//   legacyHeaders: false,
+// });
+// app.use(limiter);
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -86,6 +111,13 @@ app.use((req, res, next) => {
   console.log(`[${timestamp}] ${req.method} ${req.path}`);
   next();
 });
+
+// Serve static files (HTML, CSS, JS, images, etc.)
+app.use(express.static(__dirname, {
+  index: 'index.html',
+  extensions: ['html', 'htm'],
+  dotfiles: 'allow' // Allow serving dotfiles like .env in resources/
+}));
 
 // ============================================================================
 // Core Functions
@@ -309,9 +341,9 @@ async function scanForCss() {
 // ============================================================================
 
 /**
- * Root endpoint - Welcome page with API information
+ * API information endpoint
  */
-app.get('/', (_req, res) => {
+app.get('/api', (_req, res) => {
   res.json({
     name: 'Auth0 Proxy Server',
     version: '1.0.0',
@@ -347,7 +379,7 @@ app.get('/', (_req, res) => {
     },
     security: {
       allowedDomains: ALLOWED_DOMAINS,
-      rateLimit: `${RATE_LIMIT_MAX} requests per ${RATE_LIMIT_WINDOW / 1000} seconds`,
+      rateLimit: 'disabled',
       requestTimeout: `${REQUEST_TIMEOUT}ms`
     },
     documentation: 'See README.md for complete documentation'
@@ -502,16 +534,20 @@ app.use((req, res) => {
 
 const server = app.listen(PORT, () => {
   console.log('='.repeat(60));
-  console.log(`Auth0 Proxy Server`);
+  console.log(`Auth0 API Playground & Proxy Server`);
   console.log('='.repeat(60));
   console.log(`Status: Running`);
   console.log(`Port: ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Allowed Domains: ${ALLOWED_DOMAINS.join(', ')}`);
   console.log(`Request Timeout: ${REQUEST_TIMEOUT}ms`);
-  console.log(`Rate Limit: ${RATE_LIMIT_MAX} requests per ${RATE_LIMIT_WINDOW / 1000}s`);
+  console.log(`Rate Limit: disabled`);
+  console.log('='.repeat(60));
+  console.log(`Web Interface: http://localhost:${PORT}/`);
   console.log('='.repeat(60));
   console.log(`Endpoints:`);
+  console.log(`  - GET  / (Auth0 API Playground UI)`);
+  console.log(`  - GET  /api (API information)`);
   console.log(`  - POST /api/proxy (main proxy endpoint)`);
   console.log(`  - GET  /api/css-files?scan=true (CSS scanner)`);
   console.log(`  - GET  /health (health check)`);

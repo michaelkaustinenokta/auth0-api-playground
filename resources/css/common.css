@@ -349,14 +349,14 @@ input::selection {
 }
 
 #uno {
-	background: url(/auth0/wallpaper.png);
+	background: url(/wallpaper.png);
 	background-position: left top;
 	background-size: cover;
 }
 
 #dos {
   transform: rotateY(180deg);
-  background: url(/auth0/horiz0n.jpg);
+  background: url(/horiz0n.jpg);
   background-position: center center;
   background-size: cover;
   scroll-behavior: hidden;
@@ -391,7 +391,7 @@ input::selection {
 	border-radius: 50%;
 	margin: auto;
 	max-width: 196px; height: 96px;
-	background: url(/auth0/auth0-favicon.svg);
+	background: url(/auth0-favicon.svg);
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center center;

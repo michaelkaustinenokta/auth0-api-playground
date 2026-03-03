@@ -1252,7 +1252,7 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 		$(document).on('click', '.topRightLogout', function() {
 			localStorage.removeItem("loggedInUser")
 			localStorage.removeItem('jwt')
-			window.location.href="/auth0"
+			window.location.href="/"
 		})
 
 		$(document).on('click', '.topRightUserInfo', function() {
