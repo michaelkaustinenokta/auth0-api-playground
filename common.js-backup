@@ -1,0 +1,623 @@
+
+$(function()
+{
+
+	var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+	    for (i = 0; i < sURLVariables.length; i++) {
+	        sParameterName = sURLVariables[i].split('=');
+
+	        if (sParameterName[0] === sParam) {
+	            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+	        }
+	    }
+	    return false;
+	};
+
+		//Update breadcrumbs when breadcrumbs clicked
+		$('*').on('click', '.switchExampleBreadcrumb', function() {
+
+			goTo = $(this).index()+1;
+
+			$("#"+activeSelect).prop("selectedIndex",goTo).change()
+
+			return false;
+
+		})
+
+	function doHighlight() {
+		$("code").each(function(i, obj) {
+			$(this).attr('data-highlighted','')
+		})
+		hljs.highlightAll();
+		
+		//$('#curlDataTextarea').hide()
+	}
+
+	$('.extraUserInput').on('keyup paste change click', function(e) {
+		$("#"+$(this).attr("id").replace("UserInput","")).val($(this).val()).trigger('keyup')
+		
+		updateCurlDataTextArea($("#"+switchExampleId).html().replaceAll("&lt;","<").replaceAll("&gt;",">").replaceAll(/\t/gi,""));
+
+		if(e.which == 13) {
+			$("#getExtraInformationDiv").css("margin-left","-10000px")
+
+	    }
+	});
+
+	function updateCurlDataTextArea(newText) {
+
+		if(newText.includes("<otp>")) {
+			
+			$('#getExtraInformationDiv').show()
+			
+			//	$("#otpUserInput").trigger('focus');
+			
+		}
+
+		
+		$('#curlDataTextarea').val(newText)
+		$('#curlSyntax').text(newText);
+		doHighlight();
+		
+		
+		$("#getExtraInformationDiv").css("marginTop","-228px")
+
+	}
+
+	//Show the correct API based on which Select that is clicked
+    $(document).on('change click', 'select:not(".settingsInput")', function() {
+
+    		$("#getExtraInformationDiv").hide()
+    	//Om det börjar strula, ändra document till "*" och change click till att bara vara change
+    		activeSelect = $(this).attr("id");
+
+			switchExampleId = $(this).find(':selected').attr('data-example');
+
+			$("#curlDataForm").show()
+
+			if(switchExampleId==undefined) {
+				console.log("bug here")
+			}
+
+			updateCurlDataTextArea($("#"+switchExampleId).html().replaceAll("&lt;","<").replaceAll("&gt;",">").replaceAll(/\t/gi,""));
+			/*
+//Solves the bug but creates other problems....
+			try{
+				updateCurlDataTextArea($("#"+switchExampleId).html().replaceAll("&lt;","<").replaceAll("&gt;",">").replaceAll(/\t/gi,""));
+
+			}catch(e){
+
+			}*/
+			
+			triggerAuthTokenChange();
+			handleApiResponse();
+
+				appendText = ""
+				countItems = 0;
+				
+				//Find the active option in the active select, loop through it and create the breadcrumbs
+				$("select").find("[data-example='"+switchExampleId+"']").parent().children("option").not(":disabled").each(function(i, obj) {
+					countItems++;
+
+					styleSelectedItem = "";
+
+					separator = " → "
+					if($(this).parent().attr("id")=="userActionsDiv" || $(this).parent().attr("id")=="callLocalhostAuth0ApiDiv") {
+						separator = " | "
+					}
+
+					if($("#"+activeSelect).not(":disabled").prop("selectedIndex")==countItems) {
+						styleSelectedItem = "padding: 2px 5px 2px 5px; color: white; background: #eb5424; color: white !important; border-radius: 5px;";
+					}
+					else {
+						styleSelectedItem = "padding: 2px 5px 2px 5px; color: white !important; ";
+					}
+
+					appendText += "<a style='"+styleSelectedItem+"'href='javascript:;' class='switchExampleBreadcrumb' data-example='"+$(this).attr('data-example')+"'>"+$(this).text() + "</a>"+separator;
+				})
+
+				appendText = appendText.replace(/\s\→\s$/,"")
+				appendText = appendText.replace(/\s\|\s$/,"")
+
+				$("#breadcrumbsDiv").html("&nbsp;↳ "+appendText).show()
+
+				$("#apiCallNameDiv").html("<span style='padding: 4px 7px 4px 0px; color: white !important; border-radius: 5px; font-weight: 300; font-size: 18px;'><!--<img src='Settings.png' style='max-width: 16px; margin-top: -2px; text-transform: uppercase !important; vertical-align: middle;'>--> "+$(this).prev().text()+"</span> ")
+
+					$(".apiDivHeader").text($("#"+activeSelect+" option:selected").text())
+					$(".welcomeDiv").text("Action Box")
+					//$(".welcomeDiv").text($("#"+activeSelect+" option:selected").attr("data-apiCallNameFamily"))
+				//}
+
+
+				if($("#"+switchExampleId).attr("data-requesttype")=="getUrl") {
+
+				    $("#"+activeSelect+" option").each(function() {
+				    	
+				    	if($(this).attr("class")!=undefined)
+				    	{
+				    		textareaId = $(this).data("example");
+				    		$("#addGetUrlButton").html("")
+				    		$(".profileLogin").html("")
+				    		
+				    		if($("#"+textareaId).hasClass("apiCall")) {
+				    			
+				    			classToList = '.'+$("#"+textareaId).attr("class").replace("apiCall ","")
+
+				    			linksToAdd = "";
+								$(classToList).each(function(y,u) {
+									
+									if($(this).attr("data-requestType")=="getUrl") {
+										/*if(linksToAdd!="") {
+											console.log("[data-example='"+$(this).attr("id")+"]'")
+											$("[data-example='"+$(this).attr("id")+"']").hide()
+
+											//generateUserAuthenticationGoogleUrl
+										}*/
+										
+										linksToAdd += "<a href='"+$(this).text()+"' class='htmlButton'> "+$(this).attr("data-buttonName")+"</a> "
+										//linksToAdd .= "<a href='"+$("#"+switchExampleId).html()+"' class='htmlButton'> User Authorization Initiation</a> &nbsp;")
+									}
+									
+									
+								})
+
+				    			$("#addGetUrlButton").append(linksToAdd);
+
+				    			$(".profileLogin").append(linksToAdd);
+
+				    			$(".profileLogin a").each(function() {
+				    				console.log($(this).attr("href"))
+								      
+								   $(this).attr("href",$(this).attr("href")+"&state=showProfile")
+								});
+
+				    			triggerAuthTokenChange()
+
+				    		}
+				    		//textarea = $("#"+textareaId).attr("class")
+
+				    		
+
+
+					    	//console.log($("#"+textareaId).data("requesttype"))
+					    	/*if($("#"+textareaId).find('[data-requesttype="getUrl"]') == "getUrl") {
+					    		$("#addGetUrlButton").html("<a href='"+$("#"+switchExampleId).html()+"' class='htmlButton'> User Authorization Initiation</a> &nbsp;")	
+					    	}*/
+					    	
+					    	
+				    	}
+				    	
+
+				    	
+				    	//console.log($("#"+textareaId).html())
+				    	
+					})
+
+					$("#generateUserAuthenticationUrlButtonDiv").show();
+					$("#curlSyntax").hide();
+					$("#apiResponse").hide();
+					$("#curlDataSubmitButton").hide();
+					$(".apiDivHeader").hide();
+					$(".welcomeDiv").show();
+				}
+				else {
+					$("#generateUserAuthenticationUrlButtonDiv").hide();
+					$("#curlSyntax").show()
+					$(".welcomeDiv").hide();
+					$("#apiResponse").show();
+					$("#curlDataSubmitButton").show();
+					$(".apiDivHeader").show();
+				}
+				
+				return false;
+
+	});
+
+	activeSelect = ""
+	
+	//Initiated at page load, generates the API call selects html code
+    $(".apiCall").each(function(i, obj) {
+		activeSelect = $("select").eq(0).attr("id");
+        
+		//Generates the .examples menu from the data in the #apiCalls div
+        classToCreateSelectHtml = $(this).attr('class').replace("apiCall","").trim()+"Div"
+
+        if($("#"+classToCreateSelectHtml).length<1) {
+
+			//Decides the display texts in the selects and options, however this couldve been done much better in retrospect
+            displayMethodText = "";
+
+			var familyName = $("."+$(this).attr('class').replace("apiCall ","")).eq(0).attr("data-apiCallNameFamily")
+
+    		if(familyName != null) {
+    			displayMethodText = familyName;
+    		}
+
+			//Add the h4 title for each select
+            $("#headerDivForSelect").append("<h4>"+displayMethodText+"</h4><select style='margin-bottom: 1em;' id='"+classToCreateSelectHtml+"'></select>")
+						//$("#headerDivForSelect").append("<div style='float: left; text-align: center; margin-right: 1em;'><h4>"+displayMethodText+"</h4><select id='"+classToCreateSelectHtml+"'></select></div>")
+						$("#"+classToCreateSelectHtml).append('<option disabled>API</option>')
+
+        }
+		
+		//Add each option for each API call
+        $("#"+classToCreateSelectHtml).append('<option class="switchExample" data-example="'+$(this).attr("id")+'">'+$(this).data("apicallname")+'</option>')
+
+    });
+	
+	//When submitting the curl form
+    $("#curlDataForm").submit(function(e){
+        e.preventDefault();
+		
+		//If the curl call isn't valid, show an error and stop the call before sending it to the backend
+        if($("#output").text().indexOf("Not a curl command") > -1){
+            $("#apiResponse").text("[Not sent to the API] Reason: Not a valid Curl command")
+            console.log("Error, not a valid CURL command")
+            return false;
+
+        }
+				//If everything goes well, show a loading gif while waiting for the backend response
+				$('#apiResponse').html("<img src='loading.gif'>");
+				$("#qrCodeDiv").hide();
+				requestType = "GET";
+
+				activeOption = "#"+$("#"+activeSelect+" option").eq($("#"+activeSelect).prop("selectedIndex")).attr("data-example");
+
+				if ($(activeOption).attr("data-requestType")){
+						requestType = $(activeOption).attr("data-requestType");
+				}
+
+		//Send the curl command to the backend
+        $.ajax({
+            url: "test.php",
+            type: "post",
+            data: {curlData: $('#curlDataTextarea').val(), curlProduct: "", requestType: requestType} ,
+            success: function (response) {
+				if(response=="Not found.") {
+					alert('Check data-requesttype="POST" on the <textarea> html code, its likely POST when it should be GET or vice versa.' )
+				}
+
+				//Show the raw API response (in case the format isn't valid and the script crashes. Great error handling!
+				$('#apiResponse').text(response);
+				var tmpData = JSON.parse(response);
+                var formattedData = JSON.stringify(tmpData, null, '\t');
+                $('#apiResponse').text(formattedData);
+                handleApiResponse();
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+               //console.log(textStatus, errorThrown);
+            }
+        }).done(function( data ) {
+			    if ( console && console.log ) {
+			      //console.log( "Sample of data:", data );
+			    }
+			  });
+
+
+    });
+	
+	//Used for changing the authtoken and more in the API calls to the configured API details
+    function triggerAuthTokenChange() {
+        $("#curlDataTextarea").each(function(i, obj) {
+				$("#configDiv input").each(function(y, o) {
+
+					varNameToReplace = $(this).attr("id")
+					newValue = $(this).val()
+
+
+					$(".htmlButton").each(function(x, z) {
+
+						$(this).attr("href",($(this).attr("href").replace(new RegExp("<"+varNameToReplace+">","i"),newValue)))
+					})
+					
+
+					updateCurlDataTextArea($("#curlDataTextarea").val().replace(new RegExp("<"+$(this).attr("id")+">","i"),$(this).val()))
+					
+					//updateCurlDataTextArea($("#curlDataTextarea").val().replace(new RegExp("<"+$(this).attr("id")+">","i"),$(this).val()))
+		 		});	
+        });
+
+
+    }
+
+		newCollectionId="";
+
+	//If the API returns an CollectionID, regex replace it in all API calls
+    function handleApiResponse() {
+    
+       var IS_JSON = true;
+       try
+       {
+       		var json = $.parseJSON($("#apiResponse").text());
+       }
+       catch(err)
+       {
+               IS_JSON = false;
+       }     
+
+    	if(IS_JSON==true){ /** will return true if exist */
+       		if(json.hasOwnProperty('access_token')) {
+       			console.log("Found access token, adding to #accessToken")
+				$("#accessToken").val("Bearer "+json.access_token).change()
+			}
+			if(json.hasOwnProperty('mfa_token')) {
+       			console.log("Found MFA token, adding to #accessToken")
+				$("#mfaToken").val(json.mfa_token).change()
+			}
+        }
+
+		doHighlight()
+    	return false;
+    }
+
+/*
+		$('#curlDataForm').css("display","block")
+		$("#curlDataTextarea").text($("#apiCalls").eq(0).text())
+*/
+
+		//Show the settings div
+		$(".showSettings").click(function() {
+			$("#configDiv").toggle()
+		})
+
+		$("#apiResponse").on('change',function(e){
+		});		
+
+		/*$("a").on('click',function(e){
+			console.log($(this))
+			return false;
+			if($(this).attr("id")=="#btnRight") {
+			alert($(this).html())
+			//return false;
+			}
+
+			
+		});*/		
+
+		//Settings div, update the API div with the new credentials
+		$('.settingsInput').on('keyup paste change click', function() {
+			console.log($(this).attr("id"))
+				if (typeof(Storage) !== "undefined") {
+					localStorage.setItem($(this).attr("id"), $(this).val());
+				}				
+
+			 	triggerAuthTokenChange()
+		});
+		
+		$('.settingsInput').each(function( index ) {
+				if (typeof(Storage) !== "undefined") {
+					$(this).val(localStorage.getItem($(this).attr("id"), $(this).val()));
+				}
+
+			 	triggerAuthTokenChange()
+		});
+		
+		//Check if the input is a valid cURL command
+	var emptyOutputMsg = "Not a curl command";
+	var formattedEmptyOutputMsg = '<span style="color: #777;">'+emptyOutputMsg+'</span>';
+
+	// Hides cURL check placeholder text
+	$('#curlDataTextarea').on('focus', function() {
+		if (!$(this).val())
+			$('#output').html(formattedEmptyOutputMsg);
+	});
+
+	// Shows curl check placeholder text
+	$('#curlDataTextarea').on('blur', function() {
+		if (!$(this).val())
+			$('#output').html(formattedEmptyOutputMsg);
+	}).blur();
+
+	$('#curlDataTextarea').keyup(function()
+	{
+		var input = $(this).val();
+		if (!input)
+		{
+			$('#output').html(formattedEmptyOutputMsg);
+			return;
+		}
+
+		try {
+			var output = curlToPHP(input);
+			if (output) {
+				var coloredOutput = hljs.highlight("php", output);
+				$('#output').html(coloredOutput.value);
+			}
+		} catch (e) {
+			$('#output').html('<span class="clr-red">'+e+'</span>');
+		}
+	});
+
+	// Highlights the cURL output for the user
+	$('#output').click(function()
+	{
+		if (document.selection)
+		{
+			var range = document.body.createTextRange();
+			range.moveToElementText(this);
+			range.select();
+		}
+		else if (window.getSelection)
+		{
+			var range = document.createRange();
+			range.selectNode(this);
+			window.getSelection().addRange(range);
+		}
+	});
+
+	
+	//initiate the site
+	$("select option:not(disabled)").parent().eq(0).prop("selectedIndex",1).change()
+	
+	triggerAuthTokenChange()
+
+	if(getUrlParameter('logout') != false) {
+		alert("You've been logged out")
+	}
+	else if(getUrlParameter("code")!=false) {
+		getCode = getUrlParameter('code');
+		$("#code").val(getCode);
+		$("#apiResponse").text("Code returned in URL: \n"+ getCode)
+    	activeSelect="generateUserAuthenticationUrlDiv";
+    	activeSelectText="Request Access Token"
+    	$("#"+activeSelect).val(activeSelectText).change()
+
+    }
+
+		$(document).on('click keyup paste change', '#editCurlDataTextareaButton', function() {
+			/*$('#curlDataTextarea').toggle()
+	
+			$('#curlSyntax').text($('#curlDataTextarea').val());
+
+			hljs.highlightAll();
+
+			//doHighlight();*/
+			
+			return false;
+		})
+
+		
+        $(document).on('contextmenu', '.hljs-string', function(e) {
+        	
+
+        	console.log("Copied text");
+            
+            var copyText = $(this).text().match(/(?<==)[^']+/);
+
+            if(copyText==null){
+            	copyText = $(this).text().match(/(?<=: )[^']+/);
+            }
+
+            
+            if(copyText==null){
+            	copyText = $(this).text().match(/\"(.*)\"/)[1];
+            }
+
+            
+
+            if(copyText!=null){
+	        	navigator.clipboard.writeText(copyText);
+	        }
+        });
+
+        // This function creates the secret key (the verifier)
+		function generateCodeVerifier() {
+		    // (Assuming you have a function like this from our previous examples)
+		    const randomBytes = new Uint8Array(32);
+		    window.crypto.getRandomValues(randomBytes);
+		    const byteString = String.fromCharCode(...randomBytes);
+		    const base64 = btoa(byteString);
+		    return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+		}
+
+		// Your function, which creates the lock (the challenge) from the key
+		async function generateCodeChallengeFromVerifier(verifier) {
+		    const encoder = new TextEncoder();
+		    const data = encoder.encode(verifier);
+		    const digest = await window.crypto.subtle.digest('SHA-256', data);
+		    
+		    const byteString = String.fromCharCode(...new Uint8Array(digest));
+		    const base64 = btoa(byteString);
+		    return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+		}
+		
+		async function startLoginProcess() {
+		    // 1. Generate the SECRET code verifier first. This is the value you need		    
+
+		    if(localStorage.getItem("codeVerifier")==""){
+		    	const codeVerifier = generateCodeVerifier();
+		    	console.log("Secret Verifier generated (keep this safe):", codeVerifier);
+		    	$("#codeVerifier").val(codeVerifier).change()
+		    } else {
+		    	$("#codeVerifier").val(localStorage.getItem("codeVerifier")).change()
+		    }
+		    // 3. Now, generate the PUBLIC code challenge from the verifier.
+		    const codeChallenge = await generateCodeChallengeFromVerifier($("#codeVerifier").val());
+		    console.log("Public Challenge generated (send this now):", codeChallenge);
+		    $("#codeChallenge").val(codeChallenge).change()
+
+		    // 4. Redirect the user to the login page with the codeChallenge.
+		    // window.location.href = `...&code_challenge=${codeChallenge}&...`;
+		}
+
+		startLoginProcess();
+
+		if(getUrlParameter('state') == "showProfile") {
+			window.location.href = "#btnLeft"
+			$("#curlDataSubmitButton").click();
+			$(".tokenInfo").html("<img src='loading.gif'/>")
+
+			setTimeout(function (){
+  
+			 	$(".tokenInfo").html($("#apiResponse").html());
+
+			 	jsonDataArrayApiResponse = $.parseJSON($("#apiResponse").text());
+
+			 	$(".profileIntro").html("Find you info below:")
+
+			 	if(jsonDataArrayApiResponse.hasOwnProperty("scope") && jsonDataArrayApiResponse.scope.includes("openid")) {
+
+				 	$("[data-example='getUserInfo']").click()
+
+				 	$("#curlDataSubmitButton").click();
+				 	$(".profileInfo").html("<img src='loading.gif'/>")
+
+					setTimeout(function (){
+		  
+					 	$(".profileInfo").html($("#apiResponse").html());
+
+					 	jsonDataArray = $.parseJSON($("#apiResponse").text());
+
+
+					 	$(".profileName").html(jsonDataArray.name)
+
+					 	$(".profileImage").attr("src",jsonDataArray.picture)
+					            
+					}, 1000);
+				}
+				else {
+					if(jsonDataArrayApiResponse.hasOwnProperty("access_token")) {
+						$(".profileInfo").html(JSON.stringify(parseJwt("eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjNILWdmOGVqMkJBY3hRUWdoQ01sRyJ9.eyJpc3MiOiJodHRwczovL2thdXN0aW5lbi5jaWMtZGVtby1wbGF0Zm9ybS5hdXRoMGFwcC5jb20vIiwic3ViIjoiZ29vZ2xlLW9hdXRoMnwxMDM0MTg4NjEwMDUyNTM5MTgwNDkiLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdC9hdXRoMGFwaSIsImlhdCI6MTc1ODg3MDkwMiwiZXhwIjoxNzU4OTU3MzAyLCJzY29wZSI6InJlYWQ6YXBwb2ludG1lbnRzIiwiYXpwIjoiZDVBdVU2YUFvUXE0Rzh0UGVXbEhOTWc5bVFKNVZyMXkifQ.bpp4L9GooSp_K1TCB9YcqNw7RauG6yh9aK0rSVgWEcHxjWRYHgOLe6iuPfbRbCIsPLIDCZd-MN3In4pv335xBeeGZTrb-omc5KPw8BSAQWI4Aw6NBj67qyJJh0VUN6m6IHk1SB4R6P-hP9Yc5v_L7gk4DmuRWYm_tceGgoxjQzMHcOogMe3a6D9WM1A_SBo_SfHm3Bz8SpT6Y0dOat1UqEOwjf-up1rvYte_QCKMWx_1E8RweeF9UWRbbrV3W0gwddh0Zbxj0dmytoswBZeeN_86RQtnnQ-BZIqRsgFseQ-iWRR-0t2BMxp1tRdoioM4XtVj7oGDdOBDhUc2NkHtlw"), null, '\t'))	
+						doHighlight()
+					}
+					
+				}
+			            
+			}, 1000);
+
+			/*console.log(2)
+			$('a[href^="#btnLeft"]').click();*/
+		}
+
+		function parseJwt (token) {
+		    var base64Url = token.split('.')[1];
+		    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+		    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+		        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+		    }).join(''));
+
+		    return JSON.parse(jsonPayload);
+		}
+		
+		//$("#codeVerifier").val(generateCodeChallengeFromVerifier()).change()
+
+		//alert()
+
+});
+
+/*
+Test credentials:
+
+200001020000
+311776c4-449d-4e7b-bc57-8c4c046df9e3
+cb479ceb-7667-4309-afb0-539860ac5830
+879e1adf-fe3b-4a10-bdfc-dd011fc0cce3
+f5bad9a1-f47d-49e9-bfbf-4794b9bfc273
+fb06eddd-5589-4823-b433-dc6ffd4e66e6
+
+*/

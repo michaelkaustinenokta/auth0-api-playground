@@ -1,0 +1,51 @@
+  <html>
+<head>
+<title>Test</title>
+<script type="text/javascript" src="https://blocks.insurely.com/assets/bootstrap.js"></script>
+<script async>
+  window.insurely = {
+    config: {
+      customerId: '4971b404-412e-48c8-ba3f-8178cea52b50',
+      configName: 'se-hedvig',
+      productConfig: {
+        checkout: {
+          legalDocuments: {
+            cookiePolicy: 'http://docs.insurely.com',
+            privacyPolicy: 'http://docs.insurely.com',
+            termsAndConditions: 'http://docs.insurely.com',
+          },
+        },
+      },
+    },
+  };
+
+  window.addEventListener('message', (event) => {
+    const {
+      data: { origin, name, value },
+    } = event;
+
+    if (origin !== 'insurely') return;
+    if (name === 'REJECTED') {
+      console.log('Reason for rejection:', value); // Reason for rejection: POSTPONED
+    }
+  });
+</script>
+
+</head>
+<body>
+
+<iframe
+  id="insurely-frame"
+  src="https://blocks.insurely.com"
+  sandbox="
+      allow-scripts
+      allow-same-origin
+      allow-popups
+      allow-forms
+      allow-popups-to-escape-sandbox
+      allow-top-navigation"
+  style="border: 0; border-radius: 10px; width: 100%; margin: auto; display: block"
+/>
+
+</body>
+</html>

@@ -1,0 +1,261 @@
+/*
+	Eric Meyer's Reset CSS v2.0
+
+	NOTICE: This copy of the CSS reset has been modified
+	to make main tag "display: block" because the default in
+	even IE 11 is "display: inline", which is not correct.
+*/
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,main,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-collapse:collapse;border-spacing:0;}
+
+* {
+	box-sizing: border-box;
+}
+
+#iframeDiv {
+    width: 100% !important;
+		text-align: center;
+}
+
+#iframeDiv iframe {
+    display: none;
+    width: 700px;
+    height: 1500px;
+
+}
+
+#curlDataForm {
+    display: none;
+}
+
+
+body {
+	font: 14px/1.5em sans-serif;
+}
+
+header a, .h5header {
+    font-family: Gelica;
+    font-size: 15px;
+    color: black;
+}
+
+.h5header {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 19px;
+}
+
+header,
+main,
+footer {
+	
+	max-width: 900px;
+	margin: 0 auto;
+}
+
+h1 {
+	font-size: 48px;
+	font-weight: bold;
+	line-height: 1.5em;
+	text-align: center;
+}
+
+h2 {
+	font-size: 18px;
+	line-height: 1.3em;
+	text-align: center;
+	margin-bottom: 25px;
+}
+
+p {
+	max-width: 625px;
+	margin: 10px auto;
+}
+
+code {
+	font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
+	padding: 1px 3px;
+	background-color: #EEE;
+	font-size: 12px;
+}
+
+
+.clr-red {
+	color: #CC0000;
+}
+
+#input,
+#output,#apiResponse {
+	border: 1px solid #CCC;
+	padding: 10px;
+	outline: none;
+	font: 16px/1.5em Consolas, Menlo, Monaco, 'Courier New', monospace;
+	white-space: pre;
+	tab-size: 4;
+    width: 350px;
+}
+
+#input {
+	width: 100%;
+	margin-bottom: 50px;
+	overflow-y: auto;
+	resize: vertical;
+}
+
+#output,#apiResponse {
+	background-color: #fbfbfb; /* "aliceblue" - happened on that by chance choosing a color in chrome inspector tools */
+	word-wrap: break-word;
+	font-size: 14px;
+	overflow-x: auto;
+}
+
+footer {
+	margin: 50px auto;
+	text-align: center;
+}
+
+.switchExample {
+    font-weight: normal;
+
+}
+
+.main-menu__content {
+}
+
+.main-menu__page-link {
+    margin: 0px !important;
+    padding: 0px !important;
+    margin-bottom: 1em !important;
+}
+
+ul div {
+    padding-bottom: 25px;
+}
+
+ul div a {
+    padding-bottom: 25px;
+    color: green;
+}
+
+.main-menu__page-link:hover {
+    background: none !important;
+}
+
+[hidden]{
+  display:none;
+}
+
+
+#apiResponse {
+    font-family: Gelica;
+}
+
+#iframeStatusDiv {
+    height: 1em;
+    text-align: center;
+    color: gray;
+    width: 100%;
+    margin-bottom: 1em;;
+}
+
+.main-menu {
+    max-height: none;
+}
+
+.header {
+    left: auto !important;
+    margin-top: 10px;
+}
+
+header, main, footer {
+margin-left: 2em;
+}
+
+#curlDataTextarea {
+    width: 45%;
+    min-width: 650px;
+    font-size: 14px;
+    color: #444444;
+    font-family: Gelica;
+    font-weight: lighter;
+		min-height: 200px !important;
+    margin-bottom: 1em !important;
+}
+
+#apiResponse {
+    float: left;
+    min-width: 450px;
+    overflow: scroll;
+    margin-bottom: 2em !important;
+    border-radius: 8px;
+    color: #444444;
+    font-weight: lighter;
+		min-height: 200px;
+}
+
+main {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0px !important;
+    margin: 0px !important;
+		margin-left: 1em !important;
+}
+
+form input[type=submit] {
+    margin: auto;
+    margin-left: 0em;
+    margin-bottom: 2em;
+}
+
+pre {
+    font-family: Gelica;
+}
+
+h4 {
+    font-family: Gelica;
+    font-size: 15px;
+    font-weight: bold;
+    margin-left: 0.3em;
+}
+
+.header {
+    min-width: 100%;
+    display: block;
+}
+
+#configDiv input, select, option {
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #cccccc !important;
+    font-family: Gelica;
+    font-weight: lighter;
+    margin-bottom: 4px;
+}
+
+body {
+	font-family: Gelica;
+}
+
+a {
+	color: black !important;
+}
+
+a:hover {
+	color: #a2e96b !important;
+}
+
+header {
+	position: relative !important;
+
+}
+
+.addAuthTokenToAuthTokenInput {
+	color: #a2e96b !important;
+}
+
+.addAuthTokenToAuthTokenInput:hover {
+	color: white !important;
+}
+
+select {
+max-width: 9.5em;
+}

@@ -1,0 +1,44 @@
+<style>
+    iframe {border-width: 0px;}
+</style>
+<script>
+    function setupClient() {
+          setClientParams({
+            // example input
+            fontType: 'secondary',
+            prefilledInput: {
+              SWEDISH_PERSONAL_NUMBER: "200001020000"
+            }
+          })
+        }
+    window.addEventListener('message', ({data}) => {
+       /* console.groupCollapsed(`${data.origin}: ${data.name}`);
+        console.log('Origin: ', data.origin);
+      console.log('Name: ', data.name);
+      console.log('Value: ', data.value);
+      console.groupEnd();*/
+        
+    const message =  JSON.stringify({
+        Origin: data.origin,
+        Name: data.name,
+        Value: data.value
+    });
+   parent.postMessage(message,"*");
+        
+  })
+</script>
+
+<script
+  type="text/javascript"
+  src="https://dc.insurely.se/v2/assets/js/dc-bootstrap.js" onload="setupClient()"></script>
+
+<iframe
+  src="https://dc.insurely.se/v2/?clientId=insurely"
+  sandbox="allow-scripts
+    allow-same-origin
+    allow-popups
+    allow-forms
+    allow-popups-to-escape-sandbox
+    allow-top-navigation"
+/>
+

@@ -1,0 +1,280 @@
+/*
+	Eric Meyer's Reset CSS v2.0
+
+	NOTICE: This copy of the CSS reset has been modified
+	to make main tag "display: block" because the default in
+	even IE 11 is "display: inline", which is not correct.
+*/
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,main,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-collapse:collapse;border-spacing:0;}
+
+* {
+	box-sizing: border-box;
+	text-decoration: none;
+	font-family: monospace;
+	font-size: 12px;
+}
+
+#iframeDiv {
+    width: 100% !important;
+		text-align: center;
+		display: none;
+}
+
+#iframeDiv iframe {
+    display: none;
+    width: 700px;
+    height: 1500px;
+}
+
+#curlDataForm {
+		display: none;
+}
+
+
+body {
+	overflow-x: scroll;
+}
+
+.h5header {
+    text-transform: uppercase;
+    font-weight: bold;
+    
+}
+
+header,
+main,
+footer {
+}
+
+h1 {
+
+	font-weight: bold;
+	line-height: 1.5em;
+	text-align: center;
+}
+
+h2 {
+	line-height: 1.3em;
+	text-align: center;
+	margin-bottom: 25px;
+}
+
+p {
+	max-width: 625px;
+	margin: 10px auto;
+}
+
+code {
+	padding: 1px 3px;
+	background-color: #EEE;
+}
+
+
+.clr-red {
+	color: #CC0000;
+}
+
+#input,#output,#apiResponse,#iframeStatusDiv,.informationDiv {
+	border: 1px solid #CCC;
+	padding: 10px;
+	outline: none;
+	font: 16px/1.5em Consolas, Menlo, Monaco, 'Courier New', monospace;
+	white-space: pre;
+	tab-size: 4;
+  width: 100%;
+}
+
+#input {
+	width: 100%;
+	margin-bottom: 50px;
+	overflow-y: auto;
+	resize: vertical;
+}
+
+#output,#apiResponse {
+	background-color: #fbfbfb; /* "aliceblue" - happened on that by chance choosing a color in chrome inspector tools */
+	word-wrap: break-word;
+	overflow-x: auto;
+}
+
+footer {
+	margin: 50px auto;
+	text-align: center;
+}
+
+.switchExample {
+    font-weight: normal;
+
+}
+
+.main-menu__content {
+}
+
+.main-menu__page-link {
+    margin: 0px !important;
+    padding: 0px !important;
+    margin-bottom: 1em !important;
+}
+
+ul div {
+    padding-bottom: 25px;
+}
+
+ul div a {
+    padding-bottom: 25px;
+    color: green;
+}
+
+.main-menu__page-link:hover {
+    background: none !important;
+}
+
+[hidden]{
+  display:none;
+}
+
+
+#apiResponse {
+    
+}
+
+.main-menu {
+    max-height: none;
+}
+
+.header {
+    left: auto !important;
+    margin-top: 10px;
+}
+
+header, main, footer {
+margin-left: 2em;
+}
+
+#curlDataTextarea {
+    width: 45%;
+    font-size: 12px;
+    color: white;
+    font-weight: lighter;
+		min-height: 200px !important;
+    margin-bottom: 1em !important;
+		white-space:nowrap;
+		overflow: scroll;
+		-webkit-overflow-scrolling: touch;
+		margin: 1em 5px 2px 5px;
+		border-radius: 8px;
+		padding:5px;
+	max-height: 250px;
+	background: white;
+/*rgb(40, 41, 35);*/
+}
+
+#apiResponse {
+    overflow: scroll;
+    border-radius: 8px;
+    color: #444444;
+    font-weight: lighter;
+		min-height: 200px;
+		font-size: 12px;
+	margin-top: 1em;
+}
+
+
+main {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0px !important;
+    margin: 0px !important;
+		margin-left: 1em !important;
+}
+
+form input[type=submit] {
+    margin: auto;
+    margin-left: 0em;
+    margin-bottom: 2em;
+    margin: 2px 5px 2px 5px;
+    border-radius: 3px;
+}
+
+pre {
+}
+
+h4 {
+    font-size: 15px;
+    font-weight: bold;
+    margin-left: 0.3em;
+}
+
+.header {
+    display: block;
+}
+
+#configDiv input, select, option {
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #cccccc !important;
+    font-weight: lighter;
+    margin-bottom: 4px;
+}
+
+
+a {
+	color: black;
+}
+
+a:hover {
+	/*color: #44c7f4 !important;*/
+}
+
+header {
+	position: relative;
+
+}
+
+.addAuthTokenToAuthTokenInput {
+	color: #a2e96b !important;
+}
+
+.addAuthTokenToAuthTokenInput:hover {
+	color: white !important;
+}
+
+select {
+max-width: 190px;
+width: 190px;
+}
+
+.settingsInput {
+	background: #44c7f4; border-width: 0px !important;
+	max-width: 400px;
+}
+
+#qrCodeDiv {
+	display: none;
+}
+
+textarea {
+overflox-x: scroll;
+}
+
+#configDiv input {
+	border: 0px solid black !important;
+}
+
+#generateUserAuthenticationUrlButtonDiv {
+}
+
+.htmlButton {
+text-decoration:none;
+color: black !important; 
+background: white;
+border: 1px dotted black;
+border-radius: 5px;
+padding: 5px 10px 5px 10px;
+display: inline-block;
+/*background: #eb5424;*/
+}
+
+.gradientBackground  {
+	background-image: radial-gradient(223% 105.53% at 6.05% 199.17%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(31.68% 130.91% at 100% 0%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(43.14% 139.47% at 0% 136.21%, rgba(227, 235, 255, 0.3) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(170deg, rgb(64, 22, 160) 7.99%, rgb(63, 89, 228) 93.36%);
+}

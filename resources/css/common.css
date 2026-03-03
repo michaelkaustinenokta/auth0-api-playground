@@ -1,0 +1,542 @@
+/*
+	Eric Meyer's Reset CSS v2.0
+
+	NOTICE: This copy of the CSS reset has been modified
+	to make main tag "display: block" because the default in
+	even IE 11 is "display: inline", which is not correct.
+*/
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,main,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-collapse:collapse;border-spacing:0;}
+
+* {
+	box-sizing: border-box;
+	text-decoration: none;
+	font-family: monospace !important;
+	font-size: 12px;
+	scrollbar-color: #f3bd09 #1f1f1f;
+  	scrollbar-width: thin;
+  	scrollbar-width: none;
+}
+
+.hljs {
+	background: #1f1f1f !important;
+}
+
+pre {
+	width: 500px;
+}
+
+#iframeDiv {
+    width: 100% !important;
+		text-align: center;
+		display: none;
+}
+
+#iframeDiv iframe {
+    display: none;
+    width: 700px;
+    height: 1500px;
+}
+
+#curlDataForm {
+		display: none;
+}
+
+
+body {
+	overflow-y: scroll;
+	background: #111111;
+	overflow-x: hidden;
+	background-repeat: repeat;
+	background-size: cover;
+	background-position: center center;
+}
+
+.h5header {
+    text-transform: uppercase;
+    font-weight: bold;
+    
+}
+
+header,
+main,
+footer {
+}
+
+h1 {
+
+	font-weight: bold;
+	line-height: 1.5em;
+	text-align: center;
+}
+
+h2 {
+	line-height: 1.3em;
+	text-align: center;
+	margin-bottom: 25px;
+}
+
+p {
+	max-width: 625px;
+	margin: 10px auto;
+}
+
+code {
+	padding: 1px 3px;
+	background-color: #EEE;
+	overflow-y: scroll !important;
+	width:500px;
+	border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; padding: 10px; display: block;
+}
+
+
+.clr-red {
+	color: #CC0000;
+}
+
+#input,#output,#apiResponse,#iframeStatusDiv,.informationDiv {
+	border: 0px solid #CCC;
+	padding: 10px;
+	outline: none;
+	font: 16px/1.5em Consolas, Menlo, Monaco, 'Courier New', monospace;
+	white-space: pre;
+	tab-size: 4;
+  width: 100%;
+}
+
+#input {
+	width: 100%;
+	margin-bottom: 50px;
+	overflow-y: auto;
+	resize: vertical;
+}
+
+#output,#apiResponse {
+	background-color: #fbfbfb; /* "aliceblue" - happened on that by chance choosing a color in chrome inspector tools */
+	word-wrap: break-word;
+}
+
+footer {
+	margin: 50px auto;
+	text-align: center;
+}
+
+.switchExample {
+    font-weight: normal;
+
+}
+
+.main-menu__content {
+}
+
+.main-menu__page-link {
+    margin: 0px !important;
+    padding: 0px !important;
+    margin-bottom: 1em !important;
+}
+
+ul div {
+    padding-bottom: 25px;
+}
+
+ul div a {
+    padding-bottom: 25px;
+    color: green;
+}
+
+.main-menu__page-link:hover {
+    background: none !important;
+}
+
+[hidden]{
+  display:none;
+}
+
+.main-menu {
+    max-height: none;
+}
+
+.header {
+    left: auto !important;
+    margin-top: 10px;
+}
+
+header, main, footer {
+margin-left: 2em;
+}
+
+#curlDataTextarea {
+    width: 45%;
+    font-size: 12px;
+    color: black;
+    font-weight: lighter;
+		min-height: 200px !important;
+    margin-bottom: 1em !important;
+		white-space:nowrap;
+		overflow: scroll;
+		/*-webkit-overflow-scrolling: touch;*/
+		margin: 1em 5px 2px 0px;
+		border-bottom-left-radius: 8px;
+		border-bottom-right-radius: 8px;
+		padding:10px;
+	max-height: 250px;
+	display: none;
+	color: #f3bd09;
+	background: #1f1f1f;
+	border: 0px solid red;
+
+}
+
+#apiResponse {
+    color: white;
+    font-weight: lighter;
+		min-height: 200px;
+		font-size: 12px;
+	margin-top: 1em;
+	background: #1f1f1f;
+	color: #f3bd09;
+}
+
+
+main {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0px !important;
+    margin: 0px !important;
+		margin-left: 1em !important;
+}
+
+form input[type=submit] {
+    margin: auto;
+    margin-left: 0em;
+    margin-bottom: 2em;
+    margin: 2px 5px 2px 5px;
+    border-radius: 8px;
+    padding: 0.8em;
+    color: white;
+    background: #eb5424;
+    border-width: 0px;
+}
+
+h4 {
+    font-size: 13px;
+    margin-left: 0.3em;
+    color: white;
+    margin-top: 1em;
+}
+
+.header {
+    display: block;
+}
+
+#configDiv input, option, .extraUserInput {
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #cccccc !important;
+    font-weight: lighter;
+    margin-bottom: 4px;
+}
+
+a {
+	color: black;
+}
+
+a:hover {
+	/*color: #44c7f4 !important;*/
+}
+
+header {
+	position: relative;
+
+}
+
+.addAuthTokenToAuthTokenInput {
+	color: #a2e96b !important;
+}
+
+.addAuthTokenToAuthTokenInput:hover {
+	color: white !important;
+}
+
+select,.htmlButton {
+-webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: #f3bd09;
+    border-radius: 8px;
+    padding: 10px;
+    border: 0px solid #cccccc;
+    font-weight: lighter;
+    margin:0.5em;
+    margin-left: 0px;
+    line-height: 1em;
+    color: #1f1f1f !important;
+}
+
+select {
+	max-width: 190px;
+	width: 190px;
+}
+
+.htmlButton {
+	display: inline;
+	white-space: nowrap; 
+	height: 33px;
+	flex-wrap: wrap; gap: 10px;
+}
+
+.settingsInput {
+	background: #f3bd09; border-width: 0px !important;
+}
+
+#qrCodeDiv {
+	display: none;
+}
+
+textarea {
+overflox-x: scroll;
+}
+
+#configDiv input {
+	border: 0px solid black !important;
+}
+
+#curlDataTextarea, #apiResponse {
+	/*background-image: radial-gradient(223% 105.53% at 6.05% 199.17%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(31.68% 130.91% at 100% 0%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(43.14% 139.47% at 0% 136.21%, rgba(227, 235, 255, 0.3) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(170deg, rgb(64, 22, 160) 7.99%, rgb(63, 89, 228) 93.36%);*/
+	width: 500px;
+	flex-wrap: wrap; 
+}
+
+#generateUserAuthenticationUrlButtonDiv {
+	/*background-image: radial-gradient(223% 105.53% at 6.05% 199.17%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(31.68% 130.91% at 100% 0%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(43.14% 139.47% at 0% 136.21%, rgba(227, 235, 255, 0.3) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(170deg, rgb(64, 22, 160) 7.99%, rgb(63, 89, 228) 93.36%);
+	*/background: #1f1f1f;
+	color: #f3bd09;
+	line-height: 1.5em;
+	display: flex;
+	overflow: break-word;
+}
+
+#addGetUrlButton {
+	display: flex;
+	flex-wrap: wrap;
+	overflow: hidden	;
+	word-break: break-all;
+	vertical-align: text-bottom;
+}
+
+input::selection {
+    background: #1f1f1f;
+    color: rgb(243, 189, 9)
+}
+
+#curlDataTextarea, #apiResponse, #curlSyntax, #getExtraInformationDiv, #jwtDisplayerAccessToken, #jwtDisplayerIdToken {
+	/*scrollbar-width: none;*/
+	overflow-x: visible;
+	overflow-y: visible;
+}
+
+#curlDataTextarea, #curlSyntax, #getExtraInformationDiv,#apiResponse, #jwtDisplayerAccessToken, #jwtDisplayerIdToken {
+	min-height: 200px;
+	line-height: 1em;
+}
+
+#pf {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  z-index: 999 !important;
+}
+
+#uno {
+	background: url(/auth0/wallpaper.png);
+	background-position: left top;
+	background-size: cover;
+}
+
+#dos {
+  transform: rotateY(180deg);
+  background: url(/auth0/horiz0n.jpg);
+  background-position: center center;
+  background-size: cover;
+  scroll-behavior: hidden;
+  z-index: 9999; /*Be aware: the backside is still active, which is super weird...*/
+}
+
+ #uno, #dos {
+  width: 100%;
+  height: auto;
+  min-height: 100vh;
+  position: absolute;
+  backface-visibility: hidden;
+  display: block;
+}
+
+#dv, #pf:target {
+  transform: rotateY(180deg);
+  z-index: 999 !important;
+  position: relative;
+}
+
+.hljs {
+	/* color: rgb(68, 199, 244);*/
+	color: #0f7ddb; 
+}
+
+.hljs-keyword {
+	
+}
+
+.profileImage {
+	border-radius: 50%;
+	margin: auto;
+	max-width: 196px; height: 96px;
+	background: url(/auth0/auth0-favicon.svg);
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+	
+.profileName {
+	font-size: 12px;
+}
+
+#breadcrumbsDiv {
+	line-height: 2em;
+}
+
+.switchExampleBreadcrumbSelected {
+padding: 2px 5px 1px 5px;
+color: white;
+background: #eb5424;
+color: white;
+border-radius: 5px;
+width: auto;
+display: inline-block;
+height: auto;
+line-height: 1.3em;
+vertical-align: middle;
+}
+
+.switchExampleBreadcrumb {
+padding: 2px 5px 2px 5px; 
+color: white;
+}
+
+.profileLogin .htmlButton{
+margin-right: 0px;
+}
+
+.showCurlDataTextarea {
+color: #1f1f1f !important;
+}
+
+::-webkit-resizer {
+  background: #1f1f1f;
+  color: #f3bd09;
+}
+
+.instructionsDiv {
+white-space: initial;
+background: #1f1f1f; color: #f3bd09; padding: 15px; padding-bottom: 0px; z-index: 100; width: 500px; height:100%; display: none; position: relative;
+}
+
+.showSettings {
+	cursor: pointer;
+}
+
+.hideGetUrl {
+	display: none;
+}
+
+.apiDivHeader {
+background: #f3bd09; border-radius: 8px; padding: 8px; font-size: 10px; margin-bottom: -25px; padding-bottom:2em; margin-top:1em; width: 500px;
+}
+
+.jwtDisplayer {
+	display: none;
+}
+
+.showJwtDisplayerButton,.closeJwtDisplayer, .copyText, .closeJwtDisplayer {
+	cursor: pointer;
+}
+
+.showJwtDisplayerButton img, .copyText img, .closeJwtDisplayer img {
+	width: 15px; height: 15px;
+	margin-top: -2px;
+	margin-left: 6px
+}
+
+.topRightLogout, .topRightUserInfo {
+	cursor:pointer;
+	color: red;
+}
+
+.topRightLogout:hover, .topRightUserInfo:hover,#closeErrorContainer {
+	cursor:pointer;
+	color: white;
+}
+
+#configDiv.htmlButton {
+	margin: 5px;
+	background: #f3bd09;
+}
+
+#selectEnvironment {
+	margin-bottom: 10px;
+}
+
+
+.profileImageLoggedIn {
+	border-radius: 50% !important;
+}
+
+.profileImage {
+	/* Temp */
+	border-radius: 0px;
+	margin: auto;
+	max-width: 96px; height: 96px;
+}
+
+.socialButtonIcon {
+	max-width: 25px;
+	max-height: 25px;
+	margin-bottom:-8px;
+}
+
+.copyText {
+	display: inline-block;
+	float: right;
+}
+
+.primaryColor {
+	background: #44c7f4;
+}
+
+.selectedEnvironmentCss {
+	background: #44c7f4;
+}
+
+/*background: #ec85ce;*/
+	/*background: #44c7f4;*/
+
+/*	
+#dos {
+	background: url(https://kausti.com/okta/ikea.jpg);
+	background-size: 100%;
+	background-repeat: no-repeat;
+	background-position: center center;
+}*/
+/*
+.profileImage {
+	background: url(https://www.aeldresagen.dk/dist/media/icon-logo-main.svg) white;
+	margin-bottom: 20px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
+	padding: 2em;
+	border: 0.5em solid white;
+}*/
+
+
