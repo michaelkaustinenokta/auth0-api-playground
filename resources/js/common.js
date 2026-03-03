@@ -760,7 +760,7 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 	var columnsArray = [];
 
 	//id;clientId;clientSecret;clientUrl;displayName;audience;scope;organization (title = clientUrl)
-	$.get('resources/.env', function(data) {
+	$.get('/api/environments', function(data) {
 		setupEnvironments(data)
 	})
 

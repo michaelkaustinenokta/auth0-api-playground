@@ -427,6 +427,26 @@ app.get('/health', (_req, res) => {
 });
 
 /**
+ * Environments endpoint - serves .env file content securely
+ */
+app.get('/api/environments', async (_req, res, next) => {
+  try {
+    const fs = require('fs').promises;
+    const path = require('path');
+
+    // Read the .env file from resources directory
+    const envPath = path.join(__dirname, 'resources', '.env');
+    const envContent = await fs.readFile(envPath, 'utf8');
+
+    // Return as plain text (same format the frontend expects)
+    res.type('text/plain').send(envContent);
+  } catch (error) {
+    console.error('Error reading environments file:', error);
+    next(error);
+  }
+});
+
+/**
  * Main proxy endpoint (matches original PHP POST endpoint)
  */
 app.post('/api/proxy', async (req, res, next) => {
