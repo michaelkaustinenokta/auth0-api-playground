@@ -558,51 +558,67 @@ app.use((req, res) => {
 });
 
 // ============================================================================
-// Server Startup
+// Server Startup (Only for local development, not Vercel)
 // ============================================================================
 
-const server = app.listen(PORT, () => {
-  console.log('='.repeat(60));
-  console.log(`Auth0 API Playground & Proxy Server`);
-  console.log('='.repeat(60));
-  console.log(`Status: Running`);
-  console.log(`Port: ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Allowed Domains: ${ALLOWED_DOMAINS.join(', ')}`);
-  console.log(`Request Timeout: ${REQUEST_TIMEOUT}ms`);
-  console.log(`Rate Limit: disabled`);
-  console.log('='.repeat(60));
-  console.log(`Web Interface: http://localhost:${PORT}/`);
-  console.log('='.repeat(60));
-  console.log(`Endpoints:`);
-  console.log(`  - GET  / (Auth0 API Playground UI)`);
-  console.log(`  - GET  /api (API information)`);
-  console.log(`  - POST /api/proxy (main proxy endpoint)`);
-  console.log(`  - GET  /api/css-files?scan=true (CSS scanner)`);
-  console.log(`  - GET  /health (health check)`);
-  console.log(`  - POST /test.php (legacy compatibility)`);
-  console.log('='.repeat(60));
-});
+// Check if running in Vercel serverless environment
+const isVercel = process.env.VERCEL === '1';
 
-// ============================================================================
-// Graceful Shutdown
-// ============================================================================
-
-process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received: closing HTTP server');
-  server.close(() => {
-    console.log('HTTP server closed');
-    process.exit(0);
+if (!isVercel) {
+  // Local development - start the server
+  const server = app.listen(PORT, () => {
+    console.log('='.repeat(60));
+    console.log(`Auth0 API Playground & Proxy Server`);
+    console.log('='.repeat(60));
+    console.log(`Status: Running`);
+    console.log(`Port: ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Allowed Domains: ${ALLOWED_DOMAINS.join(', ')}`);
+    console.log(`Request Timeout: ${REQUEST_TIMEOUT}ms`);
+    console.log(`Rate Limit: disabled`);
+    console.log('='.repeat(60));
+    console.log(`Web Interface: http://localhost:${PORT}/`);
+    console.log('='.repeat(60));
+    console.log(`Endpoints:`);
+    console.log(`  - GET  / (Auth0 API Playground UI)`);
+    console.log(`  - GET  /api (API information)`);
+    console.log(`  - POST /api/proxy (main proxy endpoint)`);
+    console.log(`  - GET  /api/css-files?scan=true (CSS scanner)`);
+    console.log(`  - GET  /health (health check)`);
+    console.log(`  - POST /test.php (legacy compatibility)`);
+    console.log('='.repeat(60));
   });
-});
 
-process.on('SIGINT', () => {
-  console.log('\nSIGINT signal received: closing HTTP server');
-  server.close(() => {
-    console.log('HTTP server closed');
-    process.exit(0);
+  // ============================================================================
+  // Graceful Shutdown (Local only)
+  // ============================================================================
+
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM signal received: closing HTTP server');
+    server.close(() => {
+      console.log('HTTP server closed');
+      process.exit(0);
+    });
   });
-});
 
-// Export for testing
-module.exports = { app, parseCurlCommand, validateDomain, executeSecureRequest, scanForCss };
+  process.on('SIGINT', () => {
+    console.log('\nSIGINT signal received: closing HTTP server');
+    server.close(() => {
+      console.log('HTTP server closed');
+      process.exit(0);
+    });
+  });
+}
+
+// ============================================================================
+// Exports
+// ============================================================================
+
+// Export app as default for Vercel serverless
+module.exports = app;
+
+// Also export named exports for testing
+module.exports.parseCurlCommand = parseCurlCommand;
+module.exports.validateDomain = validateDomain;
+module.exports.executeSecureRequest = executeSecureRequest;
+module.exports.scanForCss = scanForCss;
