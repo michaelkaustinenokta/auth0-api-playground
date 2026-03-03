@@ -440,67 +440,76 @@ $(function()
 	
 	//Used for changing the authtoken and more in the API calls to the configured API details
     function triggerAuthTokenChange() {
-        $("#curlDataTextarea").each(function(i, obj) {
-				$("#configDiv input").each(function(y, o) {
+        // Start with the original template from the selected API example
+        // This ensures we always replace placeholders from the template, not from already-replaced text
+        let updatedCurlText = "";
 
-					varNameToReplace = $(this).attr("id")
-					newValue = $(this).val()
+        if(typeof switchExampleId !== 'undefined' && switchExampleId) {
+            updatedCurlText = $("#"+switchExampleId).html().replaceAll("&lt;","<").replaceAll("&gt;",">").replaceAll(/\t/gi,"");
+        } else {
+            // Fallback to current textarea value if no template is selected
+            updatedCurlText = $("#curlDataTextarea").val();
+        }
 
-					//console.log(varNameToReplace+" "+newValue)
-
-
-					$(".htmlButton").each(function(x, z) {
-						
-						//Bug for .htmlButton here, beginning to fix below
-
-						/*
-							if($(this).attr("id")!=undefined && $(this).attr("id").startsWith("buttonId")) {
-
-							textareaIdToFetchTextFrom = "#"+$(this).attr("id").replace(/^buttonId/,"")
-
-							console.log(textareaIdToFetchTextFrom)
-							console.log($(textareaIdToFetchTextFrom).text())
-
-							//console.log($(this).attr("id").replace("buttonId"))
-							$(this).attr("href",($(textareaIdToFetchTextFrom).text().replace(new RegExp("<"+varNameToReplace+">","ig"),newValue)))
-
-							console.log("<"+varNameToReplace+">")
-						
-							if($(this).attr("title")!=undefined) {
-								$(this).attr("title",($(this).attr("title").replace(new RegExp("<"+varNameToReplace+">","ig"),newValue)))
-							}
-						
-						}
-						*/
-
-						/*
-						FIX ALMOST THERE
-						if($(this).attr("id")!=undefined && $(this).attr("id").startsWith("buttonId")) {
-
-								textareaIdToFetchTextFrom = "#"+$(this).attr("id").replace(/^buttonId/,"")
-
-								console.log(textareaIdToFetchTextFrom)
-								$(this).attr("href",($(textareaIdToFetchTextFrom).text().replace(new RegExp("<"+varNameToReplace+">","ig")))
-
-							}*/
-
-						$(this).attr("href",($(this).attr("href").replace(new RegExp("<"+varNameToReplace+">","ig"),newValue)))
-						
-						if($(this).attr("title")!=undefined) {
-							$(this).attr("title",($(this).attr("title").replace(new RegExp("<"+varNameToReplace+">","ig"),newValue)))
-						}
-
-					})
-
-					updateCurlDataTextArea($("#curlDataTextarea").val().replace(new RegExp("<"+$(this).attr("id")+">","ig"),$(this).val()))
-					
-					//updateCurlDataTextArea($("#curlDataTextarea").val().replace(new RegExp("<"+$(this).attr("id")+">","i"),$(this).val()))
-		 		});	
+        // First, store original templates for all buttons (if not already stored)
+        $(".htmlButton").each(function() {
+            if(!$(this).data("original-href")) {
+                $(this).data("original-href", $(this).attr("href"));
+            }
+            if($(this).attr("title") && !$(this).data("original-title")) {
+                $(this).data("original-title", $(this).attr("title"));
+            }
         });
+
+        // Loop through all configDiv inputs and accumulate replacements
+        $("#configDiv input").each(function(y, o) {
+            const varNameToReplace = $(this).attr("id");
+            const newValue = $(this).val();
+
+            //console.log(varNameToReplace+" "+newValue)
+
+            // Accumulate the replacement in our working string
+            updatedCurlText = updatedCurlText.replace(
+                new RegExp("<"+varNameToReplace+">","ig"),
+                newValue
+            );
+        });
+
+        // Now update all buttons with accumulated replacements
+        $(".htmlButton").each(function() {
+            let updatedHref = $(this).data("original-href") || $(this).attr("href");
+            let updatedTitle = $(this).data("original-title") || $(this).attr("title");
+
+            // Apply all input replacements to the button's original template
+            $("#configDiv input").each(function() {
+                const varNameToReplace = $(this).attr("id");
+                const newValue = $(this).val();
+
+                updatedHref = updatedHref.replace(
+                    new RegExp("<"+varNameToReplace+">","ig"),
+                    newValue
+                );
+
+                if(updatedTitle) {
+                    updatedTitle = updatedTitle.replace(
+                        new RegExp("<"+varNameToReplace+">","ig"),
+                        newValue
+                    );
+                }
+            });
+
+            // Update the button with all replacements applied
+            $(this).attr("href", updatedHref);
+            if(updatedTitle) {
+                $(this).attr("title", updatedTitle);
+            }
+        });
+
+        // Update the textarea ONCE with all replacements applied
+        updateCurlDataTextArea(updatedCurlText);
 
 
     }
-
     $(document).on('keyup change', '#curlDataTextarea', function() {
     	$('#curlSyntax').text($('#curlDataTextarea').val());
 		doHighlight();
