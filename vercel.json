@@ -1,20 +1,8 @@
 {
-  "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "run.js",
-      "use": "@vercel/node"
+      "source": "/(.*)",
+      "destination": "/run.js"
     }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/run.js"
-    }
-  ],
-  "functions": {
-    "run.js": {
-      "includeFiles": "**"
-    }
-  }
+  ]
 }
