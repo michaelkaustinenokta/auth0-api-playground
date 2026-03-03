@@ -434,8 +434,8 @@ app.get('/api/environments', async (_req, res, next) => {
     const fs = require('fs').promises;
     const path = require('path');
 
-    // Read the .env file from resources directory
-    const envPath = path.join(__dirname, '..', 'resources', '.env');
+    // Read the .env file from api directory (copied during build)
+    const envPath = path.join(__dirname, '.env');
     const envContent = await fs.readFile(envPath, 'utf8');
 
     // Return as plain text (same format the frontend expects)

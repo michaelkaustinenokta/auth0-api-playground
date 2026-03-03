@@ -1,8 +1,10 @@
 # Sensitive files - DO NOT COMMIT
+# (but allow api/.env for Vercel deployment)
 resources/.env
 
 # Environment variables
 .env
+!api/.env
 .env.local
 .env.*.local
 
@@ -37,3 +39,4 @@ vendor/
 tmp/
 temp/
 *.tmp
+.vercel
