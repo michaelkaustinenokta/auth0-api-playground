@@ -356,8 +356,10 @@ async function executeSecureRequest(parsedCurl, requestType = 'GET') {
  */
 async function scanForCss() {
   try {
+    const path = require('path');
+    const projectRoot = path.join(__dirname, '..');
     const pattern = 'resources/css/highlight.js-styles/**/*.css';
-    const files = await glob(pattern, { cwd: __dirname });
+    const files = await glob(pattern, { cwd: projectRoot });
     return files;
   } catch (error) {
     console.error('Error scanning CSS files:', error);
