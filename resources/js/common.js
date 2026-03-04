@@ -1299,7 +1299,7 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 		});
 
 		$.ajax({
-            url: "/api/css-themes",
+            url: "/api/css-files?scan=true",
             type: "get",
             success: function (response) {
             	var tmpDataArr = response;

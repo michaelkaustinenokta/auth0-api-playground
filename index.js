@@ -356,7 +356,7 @@ async function executeSecureRequest(parsedCurl, requestType = 'GET') {
  */
 async function scanForCss() {
   try {
-    const pattern = 'resources/css/highlight.js-styles/**/*.css';
+    const pattern = 'resources/css/highlight.js-styles/*.css';
     const files = await glob(pattern, { cwd: __dirname });
     return files;
   } catch (error) {
@@ -399,7 +399,7 @@ app.get('/api', (_req, res) => {
       cssScanner: {
         method: 'GET',
         path: '/api/css-files?scan=true',
-        description: 'Scans for CSS files in resources/css/highlight.js-styles/'
+        description: 'Scans for CSS files in resources/css/highlight.js-styles/ (returns 206 themes)'
       },
       legacy: {
         testPhp: 'POST /test.php (forwards to /api/proxy)',
@@ -484,6 +484,46 @@ app.get('/api/config', async (_req, res, next) => {
     res.type('text/plain').send(adaptedLines.join('\n'));
   } catch (error) {
     console.error('Error reading config file:', error);
+    next(error);
+  }
+});
+
+/**
+ * CSS files scanner endpoint - returns list of available highlight.js themes
+ */
+app.get('/api/css-themes', async (_req, res, next) => {
+  try {
+    const fs = require('fs').promises;
+    const path = require('path');
+
+    // Scan for CSS files in resources/css/highlight.js-styles
+    const cssDir = path.join(__dirname, '..', 'resources', 'css', 'highlight.js-styles');
+    const cssFiles = [];
+
+    async function scanDirectory(dir, baseDir = dir) {
+      const entries = await fs.readdir(dir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+          await scanDirectory(fullPath, baseDir);
+        } else if (entry.isFile() && entry.name.endsWith('.css')) {
+          // Get relative path from resources/css
+          const relativePath = path.relative(path.join(__dirname, '..'), fullPath).replace(/\\/g, '/');
+          cssFiles.push(relativePath);
+        }
+      }
+    }
+
+    await scanDirectory(cssDir);
+
+    // Sort alphabetically
+    cssFiles.sort();
+
+    res.json(cssFiles);
+  } catch (error) {
+    console.error('Error scanning CSS files:', error);
     next(error);
   }
 });
