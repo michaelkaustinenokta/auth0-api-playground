@@ -1298,25 +1298,24 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
   
 		});
 
-		/*$.ajax({
-            url: "test.php",
+		$.ajax({
+            url: "/api/css-themes",
             type: "get",
-            data: {scanForCss: "true"} ,
             success: function (response) {
-            	var tmpDataArr = JSON.parse(response);
+            	var tmpDataArr = response;
 
             	$.each(tmpDataArr, function(i, item) {
 				    $("#cssSelector").append($('<option>', {
 					    value: tmpDataArr[i],
 					    text: tmpDataArr[i].substring(tmpDataArr[i].lastIndexOf("/") + 1).replace(".css","")
-					})); 
-					
+					}));
+
 				});
             },
             error: function(jqXHR, textStatus, errorThrown) {
-               //console.log(textStatus, errorThrown);
+               console.error('Error loading CSS themes:', textStatus, errorThrown);
             }
-        });*/
+        });
 
         $("#cssSelector").on('change', function() {
         	console.log(this.value)

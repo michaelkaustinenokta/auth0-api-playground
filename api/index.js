@@ -489,6 +489,46 @@ app.get('/api/config', async (_req, res, next) => {
 });
 
 /**
+ * CSS files scanner endpoint - returns list of available highlight.js themes
+ */
+app.get('/api/css-themes', async (_req, res, next) => {
+  try {
+    const fs = require('fs').promises;
+    const path = require('path');
+
+    // Scan for CSS files in resources/css/highlight.js-styles
+    const cssDir = path.join(__dirname, '..', 'resources', 'css', 'highlight.js-styles');
+    const cssFiles = [];
+
+    async function scanDirectory(dir, baseDir = dir) {
+      const entries = await fs.readdir(dir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+          await scanDirectory(fullPath, baseDir);
+        } else if (entry.isFile() && entry.name.endsWith('.css')) {
+          // Get relative path from resources/css
+          const relativePath = path.relative(path.join(__dirname, '..'), fullPath).replace(/\\/g, '/');
+          cssFiles.push(relativePath);
+        }
+      }
+    }
+
+    await scanDirectory(cssDir);
+
+    // Sort alphabetically
+    cssFiles.sort();
+
+    res.json(cssFiles);
+  } catch (error) {
+    console.error('Error scanning CSS files:', error);
+    next(error);
+  }
+});
+
+/**
  * Main proxy endpoint (matches original PHP POST endpoint)
  */
 app.post('/api/proxy', async (req, res, next) => {
