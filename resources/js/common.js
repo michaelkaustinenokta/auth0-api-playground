@@ -485,12 +485,15 @@ $(function()
                 const varNameToReplace = $(this).attr("id");
                 const newValue = $(this).val();
 
-                updatedHref = updatedHref.replace(
-                    new RegExp("<"+varNameToReplace+">","ig"),
-                    newValue
-                );
+                // Only replace if updatedHref is defined
+                if(updatedHref && typeof updatedHref === 'string') {
+                    updatedHref = updatedHref.replace(
+                        new RegExp("<"+varNameToReplace+">","ig"),
+                        newValue
+                    );
+                }
 
-                if(updatedTitle) {
+                if(updatedTitle && typeof updatedTitle === 'string') {
                     updatedTitle = updatedTitle.replace(
                         new RegExp("<"+varNameToReplace+">","ig"),
                         newValue
@@ -499,7 +502,9 @@ $(function()
             });
 
             // Update the button with all replacements applied
-            $(this).attr("href", updatedHref);
+            if(updatedHref) {
+                $(this).attr("href", updatedHref);
+            }
             if(updatedTitle) {
                 $(this).attr("title", updatedTitle);
             }
@@ -782,7 +787,7 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 	});
 
 	function setupEnvironments(configDataToSetup, isDynamic) {
-		
+
 		/*configDataToSetup = `kaustinen-demo;d5AuU6aAoQq4G8tPeWlHNMg9mQJ5Vr1y;ZGHof2CjyNfw6X6Q0s72J-XY71fNYKJWy7TcPQGztei49rDZunERP7RWWsJ5sjwq;https://kaustinen.cic-demo-platform.auth0app.com;Demo;General demo environment;https://localhost/auth0api;offline openid email profile read:appointments;http://localhost/auth0;
 		pkce-test;d7wpRNvlezrA0FfSNYcHfAfELN6mKAW6;kBMtLc6j79XyvUrgaxjWuDc1BXebYbOS9lA2AEChIr8fWnWLARWr328qUB2Li46C;https://kaustinen.cic-demo-platform.auth0app.com;PKCE;Proof Key for Code Exchange (PKCE);https://pulse.com/api1;offline openid email profile create:pulse-report read:pulse-report;http://localhost/auth0;
 		par-test;j68KgrFlrknel3QpFuH4rZFgxVEgCxzf;VwwG9DG6T99mXKZkiQBV9-4xAYMHaA0ytGXn1R19UYsxF70tFn3wYU-5ED0IbNLQ;https://kaustinen.cic-demo-platform.auth0app.com;PAR;Push Authorization Requests;https://pulse.com/api1;offline openid email profile create:pulse-report read:pulse-report;http://localhost/auth0;
@@ -792,7 +797,10 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 		org-no;cfOX6MYfw9NGmjneXWkTVPr9Zj0dEEmA;tMD57vsYfNXgJLLZ5KD5ueglljgDUSMf9ZmzFb9KRZdtU0jErpUhTWX4lynjQLNG;https://xlent-test.cic-demo-platform.auth0app.com;Org NO;Org NO;https://norway.com/api;offline openid email profile read:lusekofta;http://localhost/auth0;org_EoEZrac6jhz1rkov
 		org-se;rZmoVKa3dZ4MkRqRhNfWwvHZNLHSlmzH;i0N0ODTWpxuC5xuRejfuM6_teJT8I58XXUZYDQr44EPrYeqoq8I4AeFhHWPHOJtB;https://xlent-test.cic-demo-platform.auth0app.com;Org SE;Org SE;https://sweden.com/api;offline openid email profile openid read:surstromming;http://localhost/auth0;org_O2SJaXurkVYFTdO6`
 */
-		
+
+		// Clear standardEnvironments array before populating
+		standardEnvironments = [];
+
 		columnsArray.push("id","clientId","clientSecret","tenantUrl","displayName","title","audience","scope","returnUrl","organization","companyLogoImg","companyWallpaperImg", "subjectToken","subjectTokenType","primaryColor","secondaryColor","thirdColor","fourthColor","blankForNow","cssLink")
 
 		/*
@@ -879,8 +887,31 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 			  	environmentCssLink = columns[19].replace("\t","")
 			  }
 
-			$("#selectEnvironment").append('<a '+dataElementsToAdd+' href="javascript:;" title="'+environmentHoverText+'" id="'+environmentId+'" class="htmlButton environmentSwitcherButton" style="display: inline-block;">'+environmentClientButtonName+'</a>');
-			//$("#selectEnvironment").append('<a href="javascript:;" data-environmentVariableScope="'+environmentScope+'" data-environmentVariableScope="'+environmentScope+'" data-environmentVariableAudience="'+environmentAudience+'" title="'+environmentHoverText+'" id="'+environmentId+'" class="htmlButton environmentSwitcherButton" style="display: inline-block;" data-clientId="'+environmentClientId+'" data-clientSecret="'+environmentClientSecret+'" data-clientUrl="'+environmentClientUrl+'" data-returnUrl="'+environmentReturnUrl+'">'+environmentClientButtonName+'</a>');
+		  // Store standard environment in array
+		  standardEnvironments.push({
+		  	id: environmentId,
+		  	clientId: environmentClientId,
+		  	clientSecret: environmentClientSecret,
+		  	tenantUrl: environmentClientUrl,
+		  	displayName: environmentClientButtonName,
+		  	title: environmentHoverText,
+		  	audience: environmentAudience,
+		  	scope: environmentScope,
+		  	returnUrl: environmentReturnUrl,
+		  	organization: environmentOrganization,
+		  	companyLogoImg: environmentCompanyLogoImg,
+		  	companyWallpaperImg: environmentCompanyWallpaperImg,
+		  	subjectToken: subjectToken,
+		  	subjectTokenType: subjectTokenType,
+		  	primaryColor: environmentPrimaryColor,
+		  	secondaryColor: environmentSecondaryColor,
+		  	thirdColor: environmentThirdColor,
+		  	fourthColor: environmentFourthColor,
+		  	blankForNow: environmentBlankForNow,
+		  	cssLink: environmentCssLink,
+		  	isStandard: true
+		  });
+			
 
 
 
@@ -898,6 +929,10 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 		$(selectedEnvironmentId).addClass("selectedEnvironmentCss").click().change()
 		$("#"+activeSelect+" option:selected").prop("selected",true).click().change()
 
+	// Refresh environments list after loading standard environments
+	if (typeof renderCustomEnvironmentsList === 'function') {
+		renderCustomEnvironmentsList();
+	}
 
 
 	}
@@ -1333,12 +1368,539 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 
 		/*$("#highlightJsStyle").attr("href","resources/css/highlight.js-styles/base16/ros-pine.css")
 		$("#highlightJsStyle").attr("href","resources/css/highlight.js-styles/base16/brogrammer.css")*/
-		
+
 		//Flytta till ny div
 		//$('#curlDataSubmitButton').detach().appendTo("#apiDivHeaderApiResponse")
-		
+
 		//$('#curlDataSubmitButton').css({top:$("#apiResponse").offset().top, left: $("#apiResponse").offset().left, position:"absolute"});
 
+		// ============================================================================
+		// Custom Environment Management
+		// ============================================================================
+
+		const CUSTOM_ENVS_KEY = 'customEnvironments';
+		let standardEnvironments = []; // Store standard environments loaded from API
+
+		/**
+		 * Load custom environments from localStorage
+		 */
+		function loadCustomEnvironments() {
+			try {
+				const stored = localStorage.getItem(CUSTOM_ENVS_KEY);
+				return stored ? JSON.parse(stored) : [];
+			} catch (e) {
+				console.error('Error loading custom environments:', e);
+				return [];
+			}
+		}
+
+		/**
+		 * Save custom environments to localStorage
+		 */
+		function saveCustomEnvironments(environments) {
+			try {
+				localStorage.setItem(CUSTOM_ENVS_KEY, JSON.stringify(environments));
+				return true;
+			} catch (e) {
+				console.error('Error saving custom environments:', e);
+				alert('Failed to save environments. Storage may be full.');
+				return false;
+			}
+		}
+
+		/**
+		 * Convert environment object to CSV line format
+		 */
+		function environmentToCSV(env) {
+			const columns = [
+				env.id || '',
+				env.clientId || '',
+				env.clientSecret || '',
+				env.tenantUrl || '',
+				env.displayName || '',
+				env.title || '',
+				env.audience || '',
+				env.scope || 'offline openid email profile',
+				env.returnUrl || '',
+				env.organization || '',
+				env.companyLogoImg || '',
+				env.companyWallpaperImg || '',
+				env.subjectToken || '',
+				env.subjectTokenType || '',
+				env.primaryColor || '',
+				env.secondaryColor || '',
+				env.thirdColor || '',
+				env.fourthColor || '',
+				env.blankForNow || '',
+				env.cssLink || ''
+			];
+			return columns.join(';');
+		}
+
+		/**
+		 * Parse CSV line to environment object
+		 */
+		function csvToEnvironment(csvLine) {
+			const columns = csvLine.split(';').map(col => col.trim());
+			return {
+				id: columns[0],
+				clientId: columns[1],
+				clientSecret: columns[2],
+				tenantUrl: columns[3],
+				displayName: columns[4],
+				title: columns[5],
+				audience: columns[6],
+				scope: columns[7],
+				returnUrl: columns[8],
+				organization: columns[9],
+				companyLogoImg: columns[10],
+				companyWallpaperImg: columns[11],
+				subjectToken: columns[12],
+				subjectTokenType: columns[13],
+				primaryColor: columns[14],
+				secondaryColor: columns[15],
+				thirdColor: columns[16],
+				fourthColor: columns[17],
+				blankForNow: columns[18],
+				cssLink: columns[19],
+				isCustom: true
+			};
+		}
+
+		/**
+		 * Validate environment data
+		 */
+		function validateEnvironment(env) {
+			const required = ['id', 'displayName', 'clientId', 'clientSecret', 'tenantUrl'];
+			const missing = required.filter(field => !env[field] || env[field].trim() === '');
+
+			if (missing.length > 0) {
+				alert('Missing required fields: ' + missing.join(', '));
+				return false;
+			}
+
+			// Check if ID already exists
+			const existing = loadCustomEnvironments();
+			if (existing.some(e => e.id === env.id) && !env.isEditing) {
+				alert('Environment ID already exists. Please use a unique ID.');
+				return false;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Render all environments list (both standard and custom)
+		 */
+		function renderCustomEnvironmentsList() {
+			const customEnvs = loadCustomEnvironments();
+			const allEnvs = [...standardEnvironments, ...customEnvs];
+			const container = $('#customEnvironmentsList');
+
+			container.empty();
+
+			if (allEnvs.length === 0) {
+				container.html('<div style="color: #888; font-size: 12px; padding: 5px;">No environments available.</div>');
+				return;
+			}
+
+		allEnvs.forEach(env => {
+			const isStandard = env.isStandard === true;
+			const isCustom = !isStandard;
+
+			const item = $('<div>', {
+				style: 'display: inline-block; vertical-align: middle; padding: 3px 0; margin: 3px 0;'
+			});
+
+			// Create environment button wrapper with pen icon
+			const envButton = $('<a>', {
+				href: 'javascript:;',
+				id: env.id,
+				class: 'htmlButton environmentSwitcherButton' + (isCustom ? ' customEnvironment' : ''),
+				style: 'display: inline-block; font-size: 11px; line-height:11px; margin-right: 10px; position: relative;' + (isCustom ? ' background: #5bc0de;' : ''),
+				text: env.displayName,
+				click: function(e) {
+					// Don't trigger if clicking the pen icon
+					if (!$(e.target).hasClass('env-edit-icon')) {
+						e.preventDefault();
+						$(this).click();
+					}
+				}
+			});
+
+			// Add pen icon overlay
+			// Add pen icon overlay
+			const penIcon = $('<span>', {
+				class: 'env-edit-icon',
+				html: '✎',
+				style: 'position: absolute; top: -5px; right: -5px; font-size: 10px; cursor: pointer; background: #f3bd09; color: black; padding: 2px 4px; border-radius: 3px; line-height: 1;',
+				title: 'Edit environment',
+				click: function(e) {
+					e.stopPropagation();
+					e.preventDefault();
+					openEnvironmentModal(env);
+				}
+			});
+
+
+			envButton.append(penIcon);
+
+			// Set all data attributes for the environment
+			Object.keys(env).forEach(key => {
+				if (key !== 'isStandard' && key !== 'isCustom' && key !== 'isEditing') {
+					envButton.attr('data-environmentVariable' + key, env[key] || '');
+				}
+			});
+		item.append(envButton);
+		container.append(item);
+		});
+		}
+
+		/**
+		 * Add custom environment buttons to selectEnvironment
+		 */
+		function addCustomEnvironmentButtons() {
+			const customEnvs = loadCustomEnvironments();
+
+			customEnvs.forEach(env => {
+				const dataAttrs = Object.keys(env)
+					.filter(key => key !== 'isCustom' && key !== 'isEditing')
+					.map(key => `data-environmentVariable${key}="${env[key] || ''}"`)
+					.join(' ');
+
+				const button = `<a ${dataAttrs}
+					href="javascript:;"
+					title="${env.title || env.displayName}"
+					id="${env.id}"
+					class="htmlButton environmentSwitcherButton customEnvironment"
+					style="display: inline-block; background: #5bc0de;">
+					${env.displayName}
+				</a>`;
+
+				$('#selectEnvironment').append(button);
+			});
+		}
+
+		/**
+		 * Open environment editor modal
+		 */
+		function openEnvironmentModal(env = null) {
+			const isEdit = !!env;
+
+			$('#modalTitle').text(isEdit ? 'Edit Environment' : 'Add New Environment');
+
+			// Populate CSS theme dropdown if empty
+			if ($('#modal_cssLink option').length === 0) {
+				$('#cssSelector option').each(function() {
+					$('#modal_cssLink').append($('<option>', {
+						value: $(this).val(),
+						text: $(this).text()
+					}));
+				});
+			}
+
+			// Populate fields
+			if (isEdit) {
+				$('#modal_id').val(env.id).prop('disabled', true); // Can't change ID when editing
+				$('#modal_displayName').val(env.displayName);
+				$('#modal_clientId').val(env.clientId);
+				$('#modal_clientSecret').val(env.clientSecret);
+				$('#modal_tenantUrl').val(env.tenantUrl);
+				$('#modal_title').val(env.title);
+				$('#modal_audience').val(env.audience);
+				$('#modal_scope').val(env.scope);
+				$('#modal_returnUrl').val(env.returnUrl);
+				$('#modal_organization').val(env.organization);
+				$('#modal_companyLogoImg').val(env.companyLogoImg);
+				$('#modal_companyWallpaperImg').val(env.companyWallpaperImg);
+				$('#modal_subjectToken').val(env.subjectToken);
+				$('#modal_subjectTokenType').val(env.subjectTokenType);
+				$('#modal_primaryColor').val(env.primaryColor);
+				$('#modal_secondaryColor').val(env.secondaryColor);
+				$('#modal_thirdColor').val(env.thirdColor);
+				$('#modal_fourthColor').val(env.fourthColor);
+				$('#modal_cssLink').val(env.cssLink);
+
+				// Show delete button only for custom environments
+				if (!env.isStandard) {
+					$('#deleteEnvironmentBtn').show();
+				} else {
+					$('#deleteEnvironmentBtn').hide();
+				}
+			} else {
+				// Clear all fields
+				$('#environmentEditorModal input[type="text"]').val('');
+				$('#environmentEditorModal input[type="color"]').val('#000000');
+				$('#modal_id').prop('disabled', false);
+				$('#modal_scope').val('offline openid email profile');
+				$('#advancedFields').hide();
+				$('#deleteEnvironmentBtn').hide();
+			}
+
+			$('#environmentEditorModal').data('editingId', isEdit ? env.id : null);
+			$('#environmentEditorModal').data('isCustom', isEdit && !env.isStandard);
+			$('#environmentEditorModal').show();
+		}
+
+		/**
+		 * Close environment editor modal
+		 */
+		window.closeEnvironmentModal = function() {
+			$('#environmentEditorModal').hide();
+		}
+
+		/**
+		 * Save environment from modal
+		 */
+		function saveEnvironmentFromModal() {
+			const editingId = $('#environmentEditorModal').data('editingId');
+
+			const env = {
+				id: $('#modal_id').val().trim(),
+				displayName: $('#modal_displayName').val().trim(),
+				clientId: $('#modal_clientId').val().trim(),
+				clientSecret: $('#modal_clientSecret').val().trim(),
+				tenantUrl: $('#modal_tenantUrl').val().trim(),
+				title: $('#modal_title').val().trim(),
+				audience: $('#modal_audience').val().trim(),
+				scope: $('#modal_scope').val().trim(),
+				returnUrl: $('#modal_returnUrl').val().trim(),
+				organization: $('#modal_organization').val().trim(),
+				companyLogoImg: $('#modal_companyLogoImg').val().trim(),
+				companyWallpaperImg: $('#modal_companyWallpaperImg').val().trim(),
+				subjectToken: $('#modal_subjectToken').val().trim(),
+				subjectTokenType: $('#modal_subjectTokenType').val().trim(),
+				primaryColor: $('#modal_primaryColor').val(),
+				secondaryColor: $('#modal_secondaryColor').val(),
+				thirdColor: $('#modal_thirdColor').val(),
+				fourthColor: $('#modal_fourthColor').val(),
+				blankForNow: '',
+				cssLink: $('#modal_cssLink').val(),
+				isCustom: true,
+				isEditing: !!editingId
+			};
+
+			if (!validateEnvironment(env)) {
+				return;
+			}
+
+			let customEnvs = loadCustomEnvironments();
+
+			if (editingId) {
+				// Update existing
+				const index = customEnvs.findIndex(e => e.id === editingId);
+				if (index !== -1) {
+					customEnvs[index] = env;
+				}
+			} else {
+				// Add new
+				customEnvs.push(env);
+			}
+
+			if (saveCustomEnvironments(customEnvs)) {
+				closeEnvironmentModal();
+				refreshEnvironments();
+			}
+		}
+
+		/**
+		 * Delete custom environment
+		 */
+		function deleteCustomEnvironment(envId) {
+			if (!confirm('Are you sure you want to delete this environment?')) {
+				return;
+			}
+
+			let customEnvs = loadCustomEnvironments();
+			customEnvs = customEnvs.filter(e => e.id !== envId);
+
+			if (saveCustomEnvironments(customEnvs)) {
+				// If deleted env was selected, clear selection
+				if (localStorage.getItem('selectedEnvironment') === envId) {
+					localStorage.removeItem('selectedEnvironment');
+				}
+				refreshEnvironments();
+			}
+		}
+
+		/**
+		 * Export all environments (both standard and custom) as CSV
+		 */
+		function exportEnvironmentsAsCSV() {
+			const customEnvs = loadCustomEnvironments();
+			const allEnvs = [...standardEnvironments, ...customEnvs];
+
+			if (allEnvs.length === 0) {
+				alert('No environments to export.');
+				return;
+			}
+
+			// Convert each environment to CSV line
+			const csvLines = allEnvs.map(env => environmentToCSV(env));
+			const csvContent = csvLines.join('\n');
+
+			// Create a blob and download
+			const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+			const link = document.createElement('a');
+			const url = URL.createObjectURL(blob);
+
+			link.setAttribute('href', url);
+			link.setAttribute('download', 'all-environments.csv');
+			link.style.visibility = 'hidden';
+
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+		}
+
+		/**
+		 * Handle CSV file upload
+		 */
+		function handleCSVUpload(event) {
+			const file = event.target.files[0];
+			if (!file) return;
+
+			$('#uploadStatus').text('Processing...').css('color', '#f3bd09');
+
+			const reader = new FileReader();
+			reader.onload = function(e) {
+				try {
+					const content = e.target.result;
+					const lines = content.split('\n').filter(line => line.trim() !== '');
+
+					const newEnvs = [];
+					const errors = [];
+
+				const existingEnvs = loadCustomEnvironments();
+				const existingIds = existingEnvs.map(e => e.id);
+
+				lines.forEach((line, index) => {
+					try {
+						const env = csvToEnvironment(line);
+
+						// Basic validation without duplicate check
+						const required = ['id', 'displayName', 'clientId', 'clientSecret', 'tenantUrl'];
+						const missing = required.filter(field => !env[field] || env[field].trim() === '');
+
+						if (missing.length > 0) {
+							errors.push(`Line ${index + 1}: Missing required fields: ${missing.join(', ')}`);
+						} else if (existingIds.includes(env.id)) {
+							errors.push(`Line ${index + 1}: Environment ID "${env.id}" already exists (skipped)`);
+						} else {
+							newEnvs.push(env);
+						}
+					} catch (err) {
+						errors.push(`Line ${index + 1}: ${err.message}`);
+					}
+				});
+
+					if (newEnvs.length > 0) {
+						const customEnvs = loadCustomEnvironments();
+						const merged = [...customEnvs, ...newEnvs];
+
+						if (saveCustomEnvironments(merged)) {
+							$('#uploadStatus').text(`✓ Added ${newEnvs.length} environment(s)`).css('color', '#5cb85c');
+							setTimeout(() => $('#uploadStatus').text(''), 3000);
+							refreshEnvironments();
+						}
+					}
+
+					if (errors.length > 0) {
+						alert('Some errors occurred:\n' + errors.join('\n'));
+					}
+
+				} catch (err) {
+					$('#uploadStatus').text('✗ Upload failed').css('color', '#d9534f');
+					console.error('CSV upload error:', err);
+				}
+			};
+
+			reader.readAsText(file);
+			event.target.value = ''; // Clear input
+		}
+
+		/**
+		 * Refresh all environment displays
+		 */
+		function refreshEnvironments() {
+			// Remove old custom environment buttons
+			$('.customEnvironment').remove();
+
+			// Re-add custom environment buttons
+			// addCustomEnvironmentButtons(); // No longer needed - renderCustomEnvironmentsList handles this
+
+			// Refresh custom environments list in config
+			renderCustomEnvironmentsList();
+		}
+
+		// ============================================================================
+		// Event Handlers
+		// ============================================================================
+
+		// Initialize custom environments on page load
+		renderCustomEnvironmentsList();
+		// addCustomEnvironmentButtons(); // No longer needed - renderCustomEnvironmentsList handles this
+
+		// Upload CSV button
+		$('#uploadCsvBtn').on('click', function() {
+			$('#envCsvUpload').click();
+		});
+
+		// CSV upload handler
+		$('#envCsvUpload').on('change', handleCSVUpload);
+
+		// Export button
+		$('#exportEnvironments').on('click', exportEnvironmentsAsCSV);
+
+	// Download example CSV button
+	$('#downloadExampleCsv').on('click', function() {
+		const exampleCSV = 'example-env;client-id-here;client-secret-here;https://your-tenant.auth0.com;Example Environment;Hover text description;https://your-api.com/api;offline openid email profile;http://localhost/auth0;org_123ABC;https://example.com/logo.png;https://example.com/wallpaper.jpg;legacy-token-123;urn:ietf:params:oauth:token-type:jwt;#f3bd09;#44c7f4;#1f1f1f;#cccccc;base16/brogrammer.css';
+
+		const blob = new Blob([exampleCSV], { type: 'text/csv;charset=utf-8;' });
+		const link = document.createElement('a');
+		const url = URL.createObjectURL(blob);
+
+		link.setAttribute('href', url);
+		link.setAttribute('download', 'example-environment.csv');
+		link.style.visibility = 'hidden';
+
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	});
+
+		// Manual add button
+		$('#addEnvironmentManually').on('click', function() {
+			openEnvironmentModal();
+		});
+
+	// Save button in modal
+	$('#saveEnvironment').on('click', saveEnvironmentFromModal);
+
+	// Cancel button in modal
+	$('#cancelEnvironmentBtn').on('click', function() {
+		closeEnvironmentModal();
+	});
+
+	// Close X button in modal
+	$('#modalCloseBtn').on('click', function() {
+		closeEnvironmentModal();
+	});
+
+	// Delete button in modal
+	$('#deleteEnvironmentBtn').on('click', function() {
+		const editingId = $('#environmentEditorModal').data('editingId');
+		if (editingId) {
+			deleteCustomEnvironment(editingId);
+		}
+	});
+
+	// Close modal with Escape key
+	$(document).on('keydown', function(e) {
+		if (e.key === 'Escape' && $('#environmentEditorModal').is(':visible')) {
+			closeEnvironmentModal();
+		}
+	});
 
 });
 

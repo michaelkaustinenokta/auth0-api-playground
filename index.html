@@ -433,10 +433,24 @@
 					</div>
 
 
-					<div id="selectEnvironment" style="line-height: 1em; padding-bottom: 6px; border-bottom: 1px solid #5f5f5f;">Environment:
 
+					<!-- Environment Management Section -->
+					<div id="customEnvironmentSection" style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #5f5f5f;">
+					<!-- Action Buttons -->
+					<input type="file" id="envCsvUpload" accept=".csv,.txt" style="display: none;">
+					<button class="htmlButton" id="addEnvironmentManually" style="display: inline-block; margin-right: 5px; padding: 8px 10px;" title="Add New Environment - Create a new custom environment with your Auth0 credentials">➕</button>
+					<button class="htmlButton" id="uploadCsvBtn" style="display: inline-block; margin-right: 5px; padding: 8px 10px;" title="Upload CSV - Import multiple environments from a CSV file">📤</button>
+					<button class="htmlButton" id="exportEnvironments" style="display: inline-block; margin-right: 5px; padding: 8px 10px;" title="Export CSV - Download all environments as a CSV file">📥</button>
+					<button class="htmlButton" id="downloadExampleCsv" style="display: inline-block; margin-right: 5px; padding: 8px 10px;" title="Download Example CSV - Get a sample CSV file to see the required format">📄</button>
+					<span id="uploadStatus" style="margin-left: 10px; font-size: 12px; color: #aaa;"></span>
+
+					<!-- Custom Environments List -->
+					<div id="customEnvironmentsList" style="max-height: 150px; overflow-y: auto; margin-top: 10px; display: inline-block;">
+						<!-- Populated dynamically with custom environment items -->
+					</div>
 
 					</div>
+
 					<div style="column-count: 2;">
 						URL: <input id="tenantUrl" type="text" value="" class="settingsInput"/><br>
 						Company Logo: <input id="companyLogoImg" type="text" value="" class="settingsInput"/><br>
@@ -488,6 +502,89 @@
 		  hljs.highlightAll();
 		</script>
 <!--<select id='cssSelector'></select>-->
+
+<!-- Environment Editor Modal -->
+<div id="environmentEditorModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999;">
+	<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1f1f1f; padding: 30px; border-radius: 8px; max-width: 600px; max-height: 80vh; overflow-y: auto; color: white;">
+		<!-- Close button -->
+		<div id="modalCloseBtn" style="position: absolute; top: 10px; right: 10px; font-size: 24px; cursor: pointer; color: #ccc; width: 30px; height: 30px; text-align: center; line-height: 30px; border-radius: 50%; background: #333;" title="Close">×</div>
+		<h2 id="modalTitle" style="color: white;">Add New Environment</h2>
+		<div style="column-count: 1;">
+			<label>Environment ID*:</label>
+			<input type="text" id="modal_id" class="settingsInput" required><br>
+
+			<label>Display Name*:</label>
+			<input type="text" id="modal_displayName" class="settingsInput" required><br>
+
+			<label>Client ID*:</label>
+			<input type="text" id="modal_clientId" class="settingsInput" required><br>
+
+			<label>Client Secret*:</label>
+			<input type="text" id="modal_clientSecret" class="settingsInput" required><br>
+
+			<label>Tenant URL*:</label>
+			<input type="text" id="modal_tenantUrl" class="settingsInput" required><br>
+
+			<label>Hover Text:</label>
+			<input type="text" id="modal_title" class="settingsInput"><br>
+
+			<label>Audience:</label>
+			<input type="text" id="modal_audience" class="settingsInput"><br>
+
+			<label>Scope:</label>
+			<input type="text" id="modal_scope" class="settingsInput" value="offline openid email profile"><br>
+
+			<label>Return URL:</label>
+			<input type="text" id="modal_returnUrl" class="settingsInput" placeholder="Leave blank to auto-detect"><br>
+
+			<label>Organization:</label>
+			<input type="text" id="modal_organization" class="settingsInput"><br>
+
+			<!-- Collapsible Advanced Section -->
+			<div style="margin: 15px 0;">
+				<button class="htmlButton" onclick="$('#advancedFields').toggle()">Toggle Advanced Fields</button>
+			</div>
+
+			<div id="advancedFields" style="display: none;">
+				<label>Company Logo URL:</label>
+				<input type="text" id="modal_companyLogoImg" class="settingsInput"><br>
+
+				<label>Wallpaper URL:</label>
+				<input type="text" id="modal_companyWallpaperImg" class="settingsInput"><br>
+
+				<label>Subject Token:</label>
+				<input type="text" id="modal_subjectToken" class="settingsInput"><br>
+
+				<label>Subject Token Type:</label>
+				<input type="text" id="modal_subjectTokenType" class="settingsInput"><br>
+
+				<label>Primary Color:</label>
+				<input type="color" id="modal_primaryColor" class="settingsInput"><br>
+
+				<label>Secondary Color:</label>
+				<input type="color" id="modal_secondaryColor" class="settingsInput"><br>
+
+				<label>Third Color:</label>
+				<input type="color" id="modal_thirdColor" class="settingsInput"><br>
+
+				<label>Fourth Color:</label>
+				<input type="color" id="modal_fourthColor" class="settingsInput"><br>
+
+				<label>CSS Theme:</label>
+				<select id="modal_cssLink" class="settingsInput">
+					<!-- Populated from #cssSelector options -->
+				</select><br>
+			</div>
+		</div>
+
+		<div style="margin-top: 20px; text-align: right;">
+			<button class="htmlButton" id="saveEnvironment">Save</button>
+			<button class="htmlButton" id="cancelEnvironmentBtn">Cancel</button>
+			<button class="htmlButton" id="deleteEnvironmentBtn" style="background: #d9534f; display: none; margin-left: 5px;" title="Delete Environment">×</button>
+		</div>
+	</div>
+</div>
+
 		</body>
 
 	</html>
