@@ -1823,6 +1823,9 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 		 * Refresh all environment displays
 		 */
 		function refreshEnvironments() {
+			// Store currently selected environment ID
+			const currentlySelected = $('.environmentSwitcherButton.selectedEnvironmentCss').attr('id');
+
 			// Remove old custom environment buttons
 			$('.customEnvironment').remove();
 
@@ -1831,6 +1834,13 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 
 			// Refresh custom environments list in config
 			renderCustomEnvironmentsList();
+
+			// Re-trigger click on the currently selected environment to update configDiv
+			if (currentlySelected) {
+				setTimeout(function() {
+					$('#' + currentlySelected).click();
+				}, 100);
+			}
 		}
 
 		// ============================================================================
