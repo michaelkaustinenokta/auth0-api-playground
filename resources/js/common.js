@@ -1303,14 +1303,18 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
             type: "get",
             success: function (response) {
             	var tmpDataArr = response;
+            	var currentCss = $("#highlightJsStyle").attr("href").split('?')[0]; // Get current CSS without query params
 
             	$.each(tmpDataArr, function(i, item) {
+            		var isSelected = (tmpDataArr[i] === currentCss);
 				    $("#cssSelector").append($('<option>', {
 					    value: tmpDataArr[i],
-					    text: tmpDataArr[i].substring(tmpDataArr[i].lastIndexOf("/") + 1).replace(".css","")
+					    text: tmpDataArr[i].substring(tmpDataArr[i].lastIndexOf("/") + 1).replace(".css",""),
+					    selected: isSelected
 					}));
 
 				});
+				console.log('Loaded', tmpDataArr.length, 'CSS themes. Current:', currentCss);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                console.error('Error loading CSS themes:', textStatus, errorThrown);
@@ -1318,8 +1322,10 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
         });
 
         $("#cssSelector").on('change', function() {
-        	console.log(this.value)
-			$("#highlightJsStyle").attr("href",this.value)
+        	console.log('CSS Selector changed to:', this.value);
+        	var newHref = this.value + '?v=' + Date.now(); // Cache busting
+			$("#highlightJsStyle").attr("href", newHref);
+			console.log('Updated highlightJsStyle href to:', newHref);
 		});
 
 
