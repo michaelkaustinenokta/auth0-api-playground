@@ -776,19 +776,14 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 	var columnsArray = [];
 
 	//id;clientId;clientSecret;clientUrl;displayName;audience;scope;organization (title = clientUrl)
-	// Try new dynamic config endpoint, fallback to static environments
-	$.get('/api/config').done(function(data) {
-		setupEnvironments(data, true); // Pass flag indicating dynamic config
-	}).fail(function() {
-		// Fallback to original endpoint if new one not available
-		$.get('/api/environments', function(data) {
-			setupEnvironments(data, false);
-		});
-	});
+	// Standard environments removed - now only using custom environments from localStorage
+	// Users can upload CSV files or manually add environments
 
+	// DISABLED: setupEnvironments function removed - now using only custom environments
+	/*
 	function setupEnvironments(configDataToSetup, isDynamic) {
 
-		/*configDataToSetup = `kaustinen-demo;d5AuU6aAoQq4G8tPeWlHNMg9mQJ5Vr1y;ZGHof2CjyNfw6X6Q0s72J-XY71fNYKJWy7TcPQGztei49rDZunERP7RWWsJ5sjwq;https://kaustinen.cic-demo-platform.auth0app.com;Demo;General demo environment;https://localhost/auth0api;offline openid email profile read:appointments;http://localhost/auth0;
+		configDataToSetup = `kaustinen-demo;d5AuU6aAoQq4G8tPeWlHNMg9mQJ5Vr1y;ZGHof2CjyNfw6X6Q0s72J-XY71fNYKJWy7TcPQGztei49rDZunERP7RWWsJ5sjwq;https://kaustinen.cic-demo-platform.auth0app.com;Demo;General demo environment;https://localhost/auth0api;offline openid email profile read:appointments;http://localhost/auth0;
 		pkce-test;d7wpRNvlezrA0FfSNYcHfAfELN6mKAW6;kBMtLc6j79XyvUrgaxjWuDc1BXebYbOS9lA2AEChIr8fWnWLARWr328qUB2Li46C;https://kaustinen.cic-demo-platform.auth0app.com;PKCE;Proof Key for Code Exchange (PKCE);https://pulse.com/api1;offline openid email profile create:pulse-report read:pulse-report;http://localhost/auth0;
 		par-test;j68KgrFlrknel3QpFuH4rZFgxVEgCxzf;VwwG9DG6T99mXKZkiQBV9-4xAYMHaA0ytGXn1R19UYsxF70tFn3wYU-5ED0IbNLQ;https://kaustinen.cic-demo-platform.auth0app.com;PAR;Push Authorization Requests;https://pulse.com/api1;offline openid email profile create:pulse-report read:pulse-report;http://localhost/auth0;
 		mfa-test;xx864WxjVm70bVoiR5F0W2FmztOPJjep;YvI_R74ccnUC2tOnNhR6DaUNUVI1Rx2iPY1FoZ-8RzJDtHZFZRn_MQfFFlyedy_t;https://mfa-kaustinen.cic-demo-platform.auth0app.com;MFA;Multifactor Authentication Test;https://mfaapi.com/;read:mfa_restricted;http://localhost/auth0;
@@ -936,6 +931,7 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 
 
 	}
+	*/  // END OF DISABLED setupEnvironments function
 
 
         $(document).on('contextmenu', '.hljs-string', function(e) {
@@ -1379,7 +1375,7 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 		// ============================================================================
 
 		const CUSTOM_ENVS_KEY = 'customEnvironments';
-		let standardEnvironments = []; // Store standard environments loaded from API
+		// standardEnvironments removed - now only using custom environments
 
 		/**
 		 * Load custom environments from localStorage
@@ -1490,17 +1486,17 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 		}
 
 		/**
-		 * Render all environments list (both standard and custom)
+		 * Render custom environments list
 		 */
 		function renderCustomEnvironmentsList() {
 			const customEnvs = loadCustomEnvironments();
-			const allEnvs = [...standardEnvironments, ...customEnvs];
+			const allEnvs = customEnvs; // Only custom environments now
 			const container = $('#customEnvironmentsList');
 
 			container.empty();
 
 			if (allEnvs.length === 0) {
-				container.html('<div style="color: #888; font-size: 12px; padding: 5px;">No environments available.</div>');
+				container.html('<div style="color: #888; font-size: 12px; padding: 5px;">No environments configured. Use ➕ to add an environment or 📤 to upload a CSV file.</div>');
 				return;
 			}
 
@@ -1724,11 +1720,11 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 		}
 
 		/**
-		 * Export all environments (both standard and custom) as CSV
+		 * Export custom environments as CSV
 		 */
 		function exportEnvironmentsAsCSV() {
 			const customEnvs = loadCustomEnvironments();
-			const allEnvs = [...standardEnvironments, ...customEnvs];
+			const allEnvs = customEnvs; // Only custom environments now
 
 			if (allEnvs.length === 0) {
 				alert('No environments to export.');
