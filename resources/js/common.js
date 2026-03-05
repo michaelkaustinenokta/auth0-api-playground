@@ -1359,20 +1359,15 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 			});
 
 			// Create environment button wrapper with pen icon
+			// Create environment button wrapper with pen icon
 			const envButton = $('<a>', {
 				href: 'javascript:;',
 				id: env.id,
 				class: 'htmlButton environmentSwitcherButton' + (isCustom ? ' customEnvironment' : ''),
 				style: 'display: inline-block; font-size: 11px; line-height:11px; margin-right: 10px; position: relative;' + (isCustom ? ' background: #5bc0de;' : ''),
-				text: env.displayName,
-				click: function(e) {
-					// Don't trigger if clicking the pen icon
-					if (!$(e.target).hasClass('env-edit-icon')) {
-						e.preventDefault();
-						$(this).click();
-					}
-				}
+				text: env.displayName
 			});
+
 
 			// Add pen icon overlay
 			// Add pen icon overlay
@@ -1394,7 +1389,7 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 			// Set all data attributes for the environment
 			Object.keys(env).forEach(key => {
 				if (key !== 'isStandard' && key !== 'isCustom' && key !== 'isEditing') {
-					envButton.attr('data-environmentVariable' + key, env[key] || '');
+					envButton.attr('data-environmentvariable' + key.toLowerCase(), env[key] || '');
 				}
 			});
 		item.append(envButton);
