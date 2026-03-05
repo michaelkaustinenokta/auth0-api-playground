@@ -1142,11 +1142,12 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 			triggerAuthTokenChange();
 		})
 
-		if (typeof(Storage) !== "undefined" && localStorage.getItem("selectedEnvironment")!="") {
+		const selectedEnv = localStorage.getItem("selectedEnvironment");
+		if (typeof(Storage) !== "undefined" && selectedEnv && selectedEnv !== "") {
 			$(".environmentSwitcherButton").removeClass("selectedEnvironmentCss").removeClass("primaryColor")
 
-			environmentIdSelected = "#"+localStorage.getItem("selectedEnvironment").replace("\t","")
-			
+			environmentIdSelected = "#"+selectedEnv.replace("\t","")
+
 			$(environmentIdSelected).addClass("selectedEnvironmentCss")
 		}
 
