@@ -1345,10 +1345,11 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 			const allEnvs = customEnvs; // Only custom environments now
 			const container = $('#customEnvironmentsList');
 
-			container.empty();
+			// Clear only environment items, keep the action buttons
+			container.find('> div:not(#envActionButtons)').remove();
 
 			if (allEnvs.length === 0) {
-				container.html('<div style="color: #888; font-size: 12px; padding: 5px;">No environments configured. Use ➕ to add an environment or 📤 to upload a CSV file.</div>');
+				container.append('<div style="color: #888; font-size: 12px; padding: 5px; margin-top: 10px;">No environments configured. Use ➕ to add an environment or 📤 to upload a CSV file.</div>');
 				return;
 			}
 
@@ -1731,6 +1732,11 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 	$('#saveEnvironment').on('click', saveEnvironmentFromModal);
 
 	// Cancel button in modal
+
+	// Toggle advanced fields button
+	$('#toggleAdvancedBtn').on('click', function() {
+		$('#advancedFields').toggle();
+	});
 	$('#cancelEnvironmentBtn').on('click', function() {
 		closeEnvironmentModal();
 	});

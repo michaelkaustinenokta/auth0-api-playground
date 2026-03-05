@@ -288,6 +288,26 @@ select {
 	background: #f3bd09; border-width: 0px !important;
 }
 
+/* Ensure all htmlButtons show pointer cursor */
+.htmlButton {
+	cursor: pointer;
+}
+
+/* Modal styling for environment editor */
+#environmentEditorModal label {
+	color: white;
+	display: block;
+	margin-top: 10px;
+	font-size: 11px;
+}
+
+#environmentEditorModal input[type="text"],
+#environmentEditorModal input[type="color"],
+#environmentEditorModal select {
+	width: 100%;
+	box-sizing: border-box;
+}
+
 #qrCodeDiv {
 	display: none;
 }

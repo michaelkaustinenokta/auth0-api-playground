@@ -436,17 +436,19 @@
 
 					<!-- Environment Management Section -->
 					<div id="customEnvironmentSection" style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #5f5f5f;">
-					<!-- Action Buttons -->
-					<input type="file" id="envCsvUpload" accept=".csv,.txt" style="display: none;">
-					<button class="htmlButton" id="addEnvironmentManually" style="display: inline-block; margin-right: 5px; padding: 8px 10px;" title="Add New Environment - Create a new custom environment with your Auth0 credentials">➕</button>
-					<button class="htmlButton" id="uploadCsvBtn" style="display: inline-block; margin-right: 5px; padding: 8px 10px;" title="Upload CSV - Import multiple environments from a CSV file">📤</button>
-					<button class="htmlButton" id="exportEnvironments" style="display: inline-block; margin-right: 5px; padding: 8px 10px;" title="Export CSV - Download all environments as a CSV file">📥</button>
-					<button class="htmlButton" id="downloadExampleCsv" style="display: inline-block; margin-right: 5px; padding: 8px 10px;" title="Download Example CSV - Get a sample CSV file to see the required format">📄</button>
-					<span id="uploadStatus" style="margin-left: 10px; font-size: 12px; color: #aaa;"></span>
 
 					<!-- Custom Environments List -->
-					<div id="customEnvironmentsList" style="max-height: 150px; overflow-y: auto; margin-top: 10px; display: inline-block;">
-						<!-- Populated dynamically with custom environment items -->
+					<div id="customEnvironmentsList" style="max-height: 150px; overflow-y: auto; display: inline-block;">
+						<!-- Action Buttons - placed first inside the list -->
+						<div id="envActionButtons" style="margin-bottom: 10px;">
+							<input type="file" id="envCsvUpload" accept=".csv,.txt" style="display: none;">
+							<button class="htmlButton" id="addEnvironmentManually" style="display: inline-block; margin-right: 5px; padding: 8px 10px; cursor: pointer;" title="Add New Environment - Create a new custom environment with your Auth0 credentials">➕</button>
+							<button class="htmlButton" id="uploadCsvBtn" style="display: inline-block; margin-right: 5px; padding: 8px 10px; cursor: pointer;" title="Upload CSV - Import multiple environments from a CSV file">📤</button>
+							<button class="htmlButton" id="exportEnvironments" style="display: inline-block; margin-right: 5px; padding: 8px 10px; cursor: pointer;" title="Export CSV - Download all environments as a CSV file">📥</button>
+							<button class="htmlButton" id="downloadExampleCsv" style="display: inline-block; margin-right: 5px; padding: 8px 10px; cursor: pointer;" title="Download Example CSV - Get a sample CSV file to see the required format">📄</button>
+							<span id="uploadStatus" style="margin-left: 10px; font-size: 12px; color: #aaa;"></span>
+						</div>
+						<!-- Environment items will be appended here dynamically -->
 					</div>
 
 					</div>
@@ -509,7 +511,7 @@
 		<!-- Close button -->
 		<div id="modalCloseBtn" style="position: absolute; top: 10px; right: 10px; font-size: 24px; cursor: pointer; color: #ccc; width: 30px; height: 30px; text-align: center; line-height: 30px; border-radius: 50%; background: #333;" title="Close">×</div>
 		<h2 id="modalTitle" style="color: white;">Add New Environment</h2>
-		<div style="column-count: 1;">
+		<div style="column-count: 2; column-gap: 20px;">
 			<label>Environment ID*:</label>
 			<input type="text" id="modal_id" class="settingsInput" required><br>
 
@@ -542,7 +544,7 @@
 
 			<!-- Collapsible Advanced Section -->
 			<div style="margin: 15px 0;">
-				<button class="htmlButton" onclick="$('#advancedFields').toggle()">Toggle Advanced Fields</button>
+				<button class="htmlButton" id="toggleAdvancedBtn">Toggle Advanced Fields</button>
 			</div>
 
 			<div id="advancedFields" style="display: none;">
