@@ -507,75 +507,116 @@
 
 <!-- Environment Editor Modal -->
 <div id="environmentEditorModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999;">
-	<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1f1f1f; padding: 30px; border-radius: 8px; max-width: 600px; max-height: 80vh; overflow-y: auto; color: white;">
+	<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1f1f1f; padding: 30px; border-radius: 8px; max-width: 700px; max-height: 80vh; overflow-y: auto; color: white;">
 		<!-- Close button -->
 		<div id="modalCloseBtn" style="position: absolute; top: 10px; right: 10px; font-size: 24px; cursor: pointer; color: #ccc; width: 30px; height: 30px; text-align: center; line-height: 30px; border-radius: 50%; background: #333;" title="Close">×</div>
-		<h2 id="modalTitle" style="color: white;">Add New Environment</h2>
-		<div style="column-count: 2; column-gap: 20px;">
-			<label>Environment ID*:</label>
-			<input type="text" id="modal_id" class="settingsInput" required><br>
-
-			<label>Display Name*:</label>
-			<input type="text" id="modal_displayName" class="settingsInput" required><br>
-
-			<label>Client ID*:</label>
-			<input type="text" id="modal_clientId" class="settingsInput" required><br>
-
-			<label>Client Secret*:</label>
-			<input type="text" id="modal_clientSecret" class="settingsInput" required><br>
-
-			<label>Tenant URL*:</label>
-			<input type="text" id="modal_tenantUrl" class="settingsInput" required><br>
-
-			<label>Hover Text:</label>
-			<input type="text" id="modal_title" class="settingsInput"><br>
-
-			<label>Audience:</label>
-			<input type="text" id="modal_audience" class="settingsInput"><br>
-
-			<label>Scope:</label>
-			<input type="text" id="modal_scope" class="settingsInput" value="offline openid email profile"><br>
-
-			<label>Return URL:</label>
-			<input type="text" id="modal_returnUrl" class="settingsInput" placeholder="Leave blank to auto-detect"><br>
-
-			<label>Organization:</label>
-			<input type="text" id="modal_organization" class="settingsInput"><br>
-
-			<!-- Collapsible Advanced Section -->
-			<div style="margin: 15px 0;">
-				<button class="htmlButton" id="toggleAdvancedBtn">Toggle Advanced Fields</button>
+		<h2 id="modalTitle" style="color: white; margin-bottom: 20px;">Add New Environment</h2>
+		
+		<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px;">
+			<div>
+				<label>Environment ID*:</label>
+				<input type="text" id="modal_id" class="settingsInput" required>
 			</div>
 
-			<div id="advancedFields" style="display: none;">
-				<label>Company Logo URL:</label>
-				<input type="text" id="modal_companyLogoImg" class="settingsInput"><br>
+			<div>
+				<label>Display Name*:</label>
+				<input type="text" id="modal_displayName" class="settingsInput" required>
+			</div>
 
-				<label>Wallpaper URL:</label>
-				<input type="text" id="modal_companyWallpaperImg" class="settingsInput"><br>
+			<div>
+				<label>Client ID*:</label>
+				<input type="text" id="modal_clientId" class="settingsInput" required>
+			</div>
 
-				<label>Subject Token:</label>
-				<input type="text" id="modal_subjectToken" class="settingsInput"><br>
+			<div>
+				<label>Client Secret*:</label>
+				<input type="text" id="modal_clientSecret" class="settingsInput" required>
+			</div>
 
-				<label>Subject Token Type:</label>
-				<input type="text" id="modal_subjectTokenType" class="settingsInput"><br>
+			<div>
+				<label>Tenant URL*:</label>
+				<input type="text" id="modal_tenantUrl" class="settingsInput" required>
+			</div>
 
-				<label>Primary Color:</label>
-				<input type="color" id="modal_primaryColor" class="settingsInput"><br>
+			<div>
+				<label>Audience:</label>
+				<input type="text" id="modal_audience" class="settingsInput">
+			</div>
 
-				<label>Secondary Color:</label>
-				<input type="color" id="modal_secondaryColor" class="settingsInput"><br>
+			<div>
+				<label>Scope:</label>
+				<input type="text" id="modal_scope" class="settingsInput" value="offline openid email profile">
+			</div>
 
-				<label>Third Color:</label>
-				<input type="color" id="modal_thirdColor" class="settingsInput"><br>
+			<div>
+				<label>Return URL:</label>
+				<input type="text" id="modal_returnUrl" class="settingsInput" placeholder="Leave blank to auto-detect">
+			</div>
 
-				<label>Fourth Color:</label>
-				<input type="color" id="modal_fourthColor" class="settingsInput"><br>
+			<div>
+				<label>Organization:</label>
+				<input type="text" id="modal_organization" class="settingsInput">
+			</div>
 
-				<label>CSS Theme:</label>
-				<select id="modal_cssLink" class="settingsInput">
-					<!-- Populated from #cssSelector options -->
-				</select><br>
+			<div>
+				<label>Hover Text:</label>
+				<input type="text" id="modal_title" class="settingsInput">
+			</div>
+		</div>
+
+		<!-- Collapsible Advanced Section -->
+		<div style="margin: 20px 0 10px 0;">
+			<button class="htmlButton" id="toggleAdvancedBtn">Toggle Advanced Fields</button>
+		</div>
+
+		<div id="advancedFields" style="display: none;">
+			<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px;">
+				<div>
+					<label>Company Logo URL:</label>
+					<input type="text" id="modal_companyLogoImg" class="settingsInput">
+				</div>
+
+				<div>
+					<label>Wallpaper URL:</label>
+					<input type="text" id="modal_companyWallpaperImg" class="settingsInput">
+				</div>
+
+				<div>
+					<label>Subject Token:</label>
+					<input type="text" id="modal_subjectToken" class="settingsInput">
+				</div>
+
+				<div>
+					<label>Subject Token Type:</label>
+					<input type="text" id="modal_subjectTokenType" class="settingsInput">
+				</div>
+
+				<div>
+					<label>Primary Color:</label>
+					<input type="color" id="modal_primaryColor" class="settingsInput">
+				</div>
+
+				<div>
+					<label>Secondary Color:</label>
+					<input type="color" id="modal_secondaryColor" class="settingsInput">
+				</div>
+
+				<div>
+					<label>Third Color:</label>
+					<input type="color" id="modal_thirdColor" class="settingsInput">
+				</div>
+
+				<div>
+					<label>Fourth Color:</label>
+					<input type="color" id="modal_fourthColor" class="settingsInput">
+				</div>
+
+				<div>
+					<label>CSS Theme:</label>
+					<select id="modal_cssLink" class="settingsInput">
+						<!-- Populated from #cssSelector options -->
+					</select>
+				</div>
 			</div>
 		</div>
 

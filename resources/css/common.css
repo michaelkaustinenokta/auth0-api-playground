@@ -300,8 +300,8 @@ select {
 #environmentEditorModal label {
 	color: white;
 	display: block;
-	margin-top: 10px;
-	font-size: 11px;
+	margin-bottom: 5px;
+	font-size: 12px;
 }
 
 #environmentEditorModal input[type="text"],
@@ -309,10 +309,26 @@ select {
 #environmentEditorModal select {
 	width: 100%;
 	box-sizing: border-box;
-	background: #f3bd09;
-	border-width: 0px !important;
-	border-radius: 8px;
-	padding: 5px 10px;
+	background: #f3bd09 !important;
+	border: none !important;
+	border-radius: 8px !important;
+	padding: 5px 10px !important;
+	height: 28px !important;
+	line-height: normal !important;
+	font-size: 13px;
+	margin: 0 !important;
+}
+
+/* Grid container styling */
+#environmentEditorModal > div > div {
+	margin-bottom: 0;
+}
+
+/* Make toggle button look like a button, not an input */
+#toggleAdvancedBtn {
+	width: auto !important;
+	padding: 8px 16px !important;
+	display: inline-block;
 }
 
 #qrCodeDiv {
