@@ -774,6 +774,8 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 	});
 
 	var columnsArray = [];
+	// Populate column names for fixCase function to work
+	columnsArray.push("id","clientId","clientSecret","tenantUrl","displayName","title","audience","scope","returnUrl","organization","companyLogoImg","companyWallpaperImg", "subjectToken","subjectTokenType","primaryColor","secondaryColor","thirdColor","fourthColor","blankForNow","cssLink");
 
 	//id;clientId;clientSecret;clientUrl;displayName;audience;scope;organization (title = clientUrl)
 	// Standard environments removed - now only using custom environments from localStorage
