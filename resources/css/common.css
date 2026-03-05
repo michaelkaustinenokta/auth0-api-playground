@@ -285,7 +285,10 @@ select {
 }
 
 .settingsInput {
-	background: #f3bd09; border-width: 0px !important;
+	background: #f3bd09;
+	border-width: 0px !important;
+	border-radius: 8px;
+	padding: 5px 10px;
 }
 
 /* Ensure all htmlButtons show pointer cursor */
@@ -306,6 +309,10 @@ select {
 #environmentEditorModal select {
 	width: 100%;
 	box-sizing: border-box;
+	background: #f3bd09;
+	border-width: 0px !important;
+	border-radius: 8px;
+	padding: 5px 10px;
 }
 
 #qrCodeDiv {
