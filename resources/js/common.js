@@ -1113,7 +1113,15 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 
 				if(name == "cssLink" && value != "") {
 					
-					$("#highlightJsStyle").attr("href","resources/css/highlight.js-styles/"+value)
+					// Handle both full path and relative path formats
+				var cssPath = value.startsWith("resources/") ? value : "resources/css/highlight.js-styles/"+value;
+				// Add cache busting to ensure theme loads
+				$("#highlightJsStyle").attr("href", cssPath + '?v=' + Date.now());
+				console.log('Applied CSS theme:', cssPath);
+				// Re-highlight all code blocks with new theme
+				setTimeout(function() {
+					doHighlight();
+				}, 100);
 				}
 
 				
@@ -1144,14 +1152,22 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 			triggerAuthTokenChange();
 		})
 
-		const selectedEnv = localStorage.getItem("selectedEnvironment");
-		if (typeof(Storage) !== "undefined" && selectedEnv && selectedEnv !== "") {
-			$(".environmentSwitcherButton").removeClass("selectedEnvironmentCss").removeClass("primaryColor")
+		// Function to apply saved environment
+		function applySavedEnvironment() {
+			const selectedEnv = localStorage.getItem("selectedEnvironment");
+			if (typeof(Storage) !== "undefined" && selectedEnv && selectedEnv !== "") {
+				$(".environmentSwitcherButton").removeClass("selectedEnvironmentCss").removeClass("primaryColor")
 
-			environmentIdSelected = "#"+selectedEnv.replace("\t","")
+				environmentIdSelected = "#"+selectedEnv.replace("\t","")
 
-			$(environmentIdSelected).addClass("selectedEnvironmentCss")
+				$(environmentIdSelected).addClass("selectedEnvironmentCss")
+
+				// Trigger click to apply the environment settings
+				$(environmentIdSelected).trigger('click')
+				console.log('Applied saved environment:', selectedEnv);
+			}
 		}
+
 
 		$(document).on('click', '.showJwtDisplayerButton', function() {
 			$("#"+$(this).attr("id").replace("Button","")).toggle();
@@ -1181,12 +1197,18 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
   
 		});
 
+	// Global variable to store CSS themes
+	window.availableCssThemes = [];
+
 		$.ajax({
             url: "/api/css-files?scan=true",
             type: "get",
             success: function (response) {
             	var tmpDataArr = response;
             	var currentCss = $("#highlightJsStyle").attr("href").split('?')[0]; // Get current CSS without query params
+
+            	// Store in global variable
+            	window.availableCssThemes = tmpDataArr;
 
             	$.each(tmpDataArr, function(i, item) {
             		var isSelected = (tmpDataArr[i] === currentCss);
@@ -1212,7 +1234,6 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 		});
 
 
-		$(".selectedEnvironmentCss").click()
 
 		/*$("#highlightJsStyle").attr("href","resources/css/highlight.js-styles/base16/ros-pine.css")
 		$("#highlightJsStyle").attr("href","resources/css/highlight.js-styles/base16/brogrammer.css")*/
@@ -1433,15 +1454,48 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 
 			$('#modalTitle').text(isEdit ? 'Edit Environment' : 'Add New Environment');
 
-			// Populate CSS theme dropdown if empty
-			if ($('#modal_cssLink option').length === 0) {
+			// Populate CSS theme dropdown - always refresh to ensure latest themes are available
+			$('#modal_cssLink').empty().append($('<option>', {
+				value: '',
+				text: '-- Select a theme --'
+			}));
+
+		// Function to populate dropdown from available themes
+		var populateThemeDropdown = function() {
+			var themesLoaded = false;
+
+			// Try using the global array first (preferred method)
+			if (window.availableCssThemes && window.availableCssThemes.length > 0) {
+				window.availableCssThemes.forEach(function(cssPath) {
+					var themeName = cssPath.substring(cssPath.lastIndexOf("/") + 1).replace(".css","");
+					$('#modal_cssLink').append($('<option>', {
+						value: cssPath,
+						text: themeName
+					}));
+				});
+				themesLoaded = true;
+				console.log('Populated', window.availableCssThemes.length, 'CSS themes from global array');
+			}
+			// Fallback to DOM element if global array is empty
+			else if ($('#cssSelector option').length > 0) {
 				$('#cssSelector option').each(function() {
 					$('#modal_cssLink').append($('<option>', {
 						value: $(this).val(),
 						text: $(this).text()
 					}));
 				});
+				themesLoaded = true;
+				console.log('Populated CSS themes from #cssSelector element');
 			}
+
+			// If still not loaded, retry after delay
+			if (!themesLoaded) {
+				console.log('CSS themes not loaded yet, retrying in 500ms...');
+				setTimeout(populateThemeDropdown, 500);
+			}
+		};
+
+		populateThemeDropdown();
 
 			// Populate fields
 			if (isEdit) {
@@ -1563,6 +1617,7 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 				if (localStorage.getItem('selectedEnvironment') === envId) {
 					localStorage.removeItem('selectedEnvironment');
 				}
+				closeEnvironmentModal();
 				refreshEnvironments();
 			}
 		}
@@ -1684,6 +1739,11 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 				setTimeout(function() {
 					$('#' + currentlySelected).click();
 				}, 100);
+			} else {
+				// If no environment was selected, try to apply saved environment from localStorage
+				setTimeout(function() {
+					applySavedEnvironment();
+				}, 100);
 			}
 		}
 
@@ -1694,6 +1754,12 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 		// Initialize custom environments on page load
 		renderCustomEnvironmentsList();
 		// addCustomEnvironmentButtons(); // No longer needed - renderCustomEnvironmentsList handles this
+
+	// Apply saved environment after buttons are rendered
+	setTimeout(function() {
+		applySavedEnvironment();
+	}, 100);
+
 
 		// Upload CSV button
 		$('#uploadCsvBtn').on('click', function() {
@@ -1708,7 +1774,7 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 
 	// Download example CSV button
 	$('#downloadExampleCsv').on('click', function() {
-		const exampleCSV = 'example-env;client-id-here;client-secret-here;https://your-tenant.auth0.com;Example Environment;Hover text description;https://your-api.com/api;offline openid email profile;http://localhost/auth0;org_123ABC;https://example.com/logo.png;https://example.com/wallpaper.jpg;legacy-token-123;urn:ietf:params:oauth:token-type:jwt;#f3bd09;#44c7f4;#1f1f1f;#cccccc;base16/brogrammer.css';
+		const exampleCSV = 'example-env;client-id-here;client-secret-here;https://your-tenant.auth0.com;Example Environment;Hover text description;https://your-api.com/api;offline openid email profile;http://localhost/auth0;org_123ABC;https://example.com/logo.png;https://example.com/wallpaper.jpg;legacy-token-123;urn:ietf:params:oauth:token-type:jwt;#f3bd09;#44c7f4;#1f1f1f;#cccccc;;base16/brogrammer.css';
 
 		const blob = new Blob([exampleCSV], { type: 'text/csv;charset=utf-8;' });
 		const link = document.createElement('a');
@@ -1752,6 +1818,11 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 		if (editingId) {
 			deleteCustomEnvironment(editingId);
 		}
+	});
+
+	// Color input change handlers for live preview
+	$('#modal_primaryColor, #modal_secondaryColor, #modal_thirdColor, #modal_fourthColor').on('input', function() {
+		updateColorPreview($(this).attr('id'));
 	});
 
 	// Close modal with Escape key

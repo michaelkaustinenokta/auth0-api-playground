@@ -440,13 +440,13 @@
 					<!-- Custom Environments List -->
 					<div id="customEnvironmentsList" style="max-height: 150px; overflow-y: auto; display: inline-block;">
 						<!-- Action Buttons - placed first inside the list -->
-						<div id="envActionButtons" style="margin-bottom: 10px;">
+						<div id="envActionButtons" style="margin-bottom: 10px; display:inline-block;">
 							<input type="file" id="envCsvUpload" accept=".csv,.txt" style="display: none;">
 							<button class="htmlButton" id="addEnvironmentManually" style="display: inline-block; margin-right: 5px; padding: 8px 10px; cursor: pointer;" title="Add New Environment - Create a new custom environment with your Auth0 credentials">➕</button>
 							<button class="htmlButton" id="uploadCsvBtn" style="display: inline-block; margin-right: 5px; padding: 8px 10px; cursor: pointer;" title="Upload CSV - Import multiple environments from a CSV file">📤</button>
 							<button class="htmlButton" id="exportEnvironments" style="display: inline-block; margin-right: 5px; padding: 8px 10px; cursor: pointer;" title="Export CSV - Download all environments as a CSV file">📥</button>
-							<button class="htmlButton" id="downloadExampleCsv" style="display: inline-block; margin-right: 5px; padding: 8px 10px; cursor: pointer;" title="Download Example CSV - Get a sample CSV file to see the required format">📄</button>
-							<span id="uploadStatus" style="margin-left: 10px; font-size: 12px; color: #aaa;"></span>
+							<button class="htmlButton" id="downloadExampleCsv" style="display: inline-block; padding: 8px 10px; cursor: pointer;" title="Download Example CSV - Get a sample CSV file to see the required format">📄</button>
+							<span id="uploadStatus" style="display: none; margin-left: 10px; font-size: 12px; color: #aaa;"></span>
 						</div>
 						<!-- Environment items will be appended here dynamically -->
 					</div>
@@ -503,7 +503,7 @@
 		  hljs.configure({languages:[]});
 		  hljs.highlightAll();
 		</script>
-<!--<select id='cssSelector'></select>-->
+<select id='cssSelector' style="display: none;"></select>
 
 <!-- Environment Editor Modal -->
 <div id="environmentEditorModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999;">
@@ -565,8 +565,8 @@
 		</div>
 
 		<!-- Collapsible Advanced Section -->
-		<div style="margin: 20px 0 10px 0;">
-			<button class="htmlButton" id="toggleAdvancedBtn">Toggle Advanced Fields</button>
+		<div style="margin: 20px 0 10px 0; display: inline-block;">
+			<button class="htmlButton" id="toggleAdvancedBtn">Show Advanced</button>
 		</div>
 
 		<div id="advancedFields" style="display: none;">
@@ -593,22 +593,22 @@
 
 				<div>
 					<label>Primary Color:</label>
-					<input type="color" id="modal_primaryColor" class="settingsInput">
+					<input type="text" id="modal_primaryColor" class="settingsInput" placeholder="#f3bd09" pattern="^#[0-9A-Fa-f]{6}$">
 				</div>
 
 				<div>
 					<label>Secondary Color:</label>
-					<input type="color" id="modal_secondaryColor" class="settingsInput">
+					<input type="text" id="modal_secondaryColor" class="settingsInput" placeholder="#f3bd09" pattern="^#[0-9A-Fa-f]{6}$">
 				</div>
 
 				<div>
 					<label>Third Color:</label>
-					<input type="color" id="modal_thirdColor" class="settingsInput">
+					<input type="text" id="modal_thirdColor" class="settingsInput" placeholder="#f3bd09" pattern="^#[0-9A-Fa-f]{6}$">
 				</div>
 
 				<div>
 					<label>Fourth Color:</label>
-					<input type="color" id="modal_fourthColor" class="settingsInput">
+					<input type="text" id="modal_fourthColor" class="settingsInput" placeholder="#f3bd09" pattern="^#[0-9A-Fa-f]{6}$">
 				</div>
 
 				<div>
@@ -620,7 +620,7 @@
 			</div>
 		</div>
 
-		<div style="margin-top: 20px; text-align: right;">
+		<div style="margin-top: 20px; text-align: right; display: inline-block; float: right;">
 			<button class="htmlButton" id="saveEnvironment">Save</button>
 			<button class="htmlButton" id="cancelEnvironmentBtn">Cancel</button>
 			<button class="htmlButton" id="deleteEnvironmentBtn" style="background: #d9534f; display: none; margin-left: 5px;" title="Delete Environment">×</button>

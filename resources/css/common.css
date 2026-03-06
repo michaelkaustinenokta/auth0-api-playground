@@ -266,7 +266,6 @@ select,.htmlButton {
     padding: 10px;
     border: 0px solid #cccccc;
     font-weight: lighter;
-    margin:0.5em;
     margin-left: 0px;
     line-height: 1em;
     color: #1f1f1f !important;
@@ -278,10 +277,10 @@ select {
 }
 
 .htmlButton {
-	display: inline;
+	display: inline-box;
 	white-space: nowrap; 
-	height: 33px;
 	flex-wrap: wrap; gap: 10px;
+	margin:0px 0.5em;
 }
 
 .settingsInput {
@@ -305,18 +304,41 @@ select {
 }
 
 #environmentEditorModal input[type="text"],
-#environmentEditorModal input[type="color"],
 #environmentEditorModal select {
 	width: 100%;
 	box-sizing: border-box;
 	background: #f3bd09 !important;
 	border: none !important;
 	border-radius: 8px !important;
-	padding: 5px 10px !important;
-	height: 28px !important;
+	padding: 10px 10px !important;
 	line-height: normal !important;
 	font-size: 13px;
 	margin: 0 !important;
+}
+
+/* Color input fields - show color preview on left */
+#modal_primaryColor,
+#modal_secondaryColor,
+#modal_thirdColor,
+#modal_fourthColor {
+	padding-left: 35px !important;
+	position: relative;
+}
+
+/* Color preview boxes */
+#modal_primaryColor::before,
+#modal_secondaryColor::before,
+#modal_thirdColor::before,
+#modal_fourthColor::before {
+	content: '';
+	position: absolute;
+	left: 5px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 20px;
+	height: 20px;
+	border-radius: 4px;
+	border: 1px solid #333;
 }
 
 /* Grid container styling */
@@ -327,8 +349,11 @@ select {
 /* Make toggle button look like a button, not an input */
 #toggleAdvancedBtn {
 	width: auto !important;
-	padding: 8px 16px !important;
+	padding: 10px !important;
+	margin-top: -1em;
 	display: inline-block;
+	background: none;
+	color:#f3bd09 !important; 
 }
 
 #qrCodeDiv {
@@ -559,7 +584,8 @@ background: #f3bd09; border-radius: 8px; padding: 8px; font-size: 10px; margin-b
 }
 
 .selectedEnvironmentCss {
-	background: #44c7f4;
+	background: #f3bd09 !important;
+	color: #1f1f1f !important;
 }
 
 /*background: #ec85ce;*/
