@@ -711,6 +711,12 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 			}
 		}
 
+		// Extract organization ID from /api/v2/organizations endpoint responses
+		if ($("#curlSyntax").html().indexOf("/api/v2/organizations") >= 0 && json.hasOwnProperty('id')) {
+			console.log("Found Organization ID from /api/v2/organizations endpoint, adding to #organizationId")
+			$("#organizationId").val(json.id).change()
+		}
+
         }
 
 		doHighlight()
