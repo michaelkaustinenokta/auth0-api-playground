@@ -696,6 +696,10 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
        			getExtraInformationFromUser('<a target="_blank" href="'+json.verification_uri_complete+'" class="htmlButton" id="continueDafFlowButton">Continue DAF flow</a>')
 				
 			}
+		if(json.hasOwnProperty('auth_req_id')) {
+       			console.log("Found auth_req_id from CIBA request, adding to #authReqId")
+			$("#authReqId").val(json.auth_req_id).change()
+		}
 
 		// Extract role ID from /api/v2/roles endpoint responses
 		if ($("#curlSyntax").html().indexOf("/api/v2/roles") >= 0) {

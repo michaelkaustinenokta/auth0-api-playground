@@ -294,7 +294,17 @@
 		--data-urlencode 'audience=<audience>' \
 		--data-urlencode 'binding_message=Confirm action' \
 		--data-urlencode 'requested_expiry=200000' \
-		--data-urlencode 'authorization_details=[{"type": "example_transaction"}]'</textarea>
+		--data-urlencode 'authorization_details=[{
+      "type": "money_transfer", 
+      "instructedAmount": {
+        "amount": 2500, 
+        "currency": "USD"
+      }, 
+      "sourceAccount": "xxxxxxxxxxx1234", 
+      "destinationAccount": "xxxxxxxxxxx9876", 
+      "beneficiary": "Hanna Herwitz", 
+      "subject": "A Lannister Always Pays His Debts"
+    }]'</textarea>
 
 		      <textarea class="apiCall ciba" id="cibaTokenRequest" data-apiCallName="CIBA Token Request (Poll)" data-requesttype="POST" data-apiCallNameFamily="CIBA" data-apiCallInformation="🚧 Poll the token endpoint to complete the CIBA flow and get the tokens.">curl --location '<tenantUrl>/oauth/token' \
 		--header 'Content-Type: application/x-www-form-urlencoded' \
@@ -549,6 +559,7 @@
 						Code Challenge: <input id="codeChallenge" type="text" value="" class="settingsInput"/><br>
 						Request URI: <input id="requestUri" type="text" value="" class="settingsInput"/><br>
 						Device code: <input id="deviceCode" type="text" value="" class="settingsInput"/><br>
+						Auth Request ID: <input id="authReqId" type="text" value="" class="settingsInput"/><br>
 						Prompt variables: <input id="promptLogin" type="text" value="" class="settingsInput"/><br>
 						Sub (User ID): <input id="userId" type="text" value="" class="settingsInput" /><br>
 						Users Session ID: <input id="sessionId" type="text" value="" class="settingsInput" /><br>
