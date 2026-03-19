@@ -174,6 +174,7 @@ function parseCurlCommand(curlString) {
   let capturingData = false;
   let dataBuffer = [];
   let dataStartPattern = '';
+  let needsUrlEncoding = false;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -192,13 +193,26 @@ function parseCurlCommand(curlString) {
         }
 
         // Join all captured lines - no newlines, just concatenate with space trimming
-        const dataValue = dataBuffer.join(' ').replace(/<dashdash>/g, '--').trim();
+        let dataValue = dataBuffer.join(' ').replace(/<dashdash>/g, '--').trim();
+
+        // URL-encode if this was from --data-urlencode
+        if (needsUrlEncoding) {
+          // Split into key=value, encode the value part
+          const equalIndex = dataValue.indexOf('=');
+          if (equalIndex > 0) {
+            const key = dataValue.substring(0, equalIndex);
+            const value = dataValue.substring(equalIndex + 1);
+            dataValue = key + '=' + encodeURIComponent(value);
+          }
+        }
+
         parsed.data.push(dataValue);
 
         // Reset capture state
         capturingData = false;
         dataBuffer = [];
         dataStartPattern = '';
+        needsUrlEncoding = false;
       } else {
         // Still capturing - add trimmed line to buffer
         const content = rawLine.replace(/\s*\\?\s*$/, '').trim();
@@ -248,17 +262,31 @@ function parseCurlCommand(curlString) {
 
       if (dataMatch) {
         // Single-line data - complete match found
-        const dataValue = dataMatch[1].replace(/<dashdash>/g, '--');
+        let dataValue = dataMatch[1].replace(/<dashdash>/g, '--');
+
+        // URL-encode if this is from --data-urlencode
+        if (cleanLine.includes('--data-urlencode')) {
+          const equalIndex = dataValue.indexOf('=');
+          if (equalIndex > 0) {
+            const key = dataValue.substring(0, equalIndex);
+            const value = dataValue.substring(equalIndex + 1);
+            dataValue = key + '=' + encodeURIComponent(value);
+          }
+        }
+
         parsed.data.push(dataValue);
       } else {
         // Multi-line data - start capturing
         // Check which data flag was used
         if (cleanLine.includes('--data-urlencode')) {
           dataStartPattern = '--data-urlencode';
+          needsUrlEncoding = true;
         } else if (cleanLine.includes('--data-raw')) {
           dataStartPattern = '--data-raw';
+          needsUrlEncoding = false;
         } else {
           dataStartPattern = '--data';
+          needsUrlEncoding = false;
         }
 
         // Extract the starting content after the opening quote
