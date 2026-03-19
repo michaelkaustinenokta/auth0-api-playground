@@ -39,6 +39,7 @@
 		--data-urlencode 'response_type=code' \
 		--data-urlencode 'scope=<scope>' \
 		--data-urlencode 'state=par' \
+		--data-urlencode 'prompt=<promptLogin>' \
 		--data-urlencode 'audience=<audience>'</textarea>
 
 		<textarea class="apiCall generateUserAuthenticationUrl" id="initiateDeviceAuthorizatoinFlow" data-apiCallName="Device Authorization" data-requesttype="POST" data-apiCallInformation="🚧 Initiate the DAF login flow, complete it in the next API call called Complete Device Authorization Flow">curl --location '<tenantUrl>/oauth/device/code' \
@@ -242,6 +243,67 @@
 			    "user_id": "<linkUserId>"
 			}'</textarea>
 
+			      <textarea class.="apiCall managementApi" id="getManagementApiToken" data-apiCallName="Get Management API Access Token" data-requesttype="POST" data-apiCallNameFamily="Management API" data-apiCallInformation="🚧 Get an access token for the Management API">curl --location '<tenantUrl>/oauth/token' \
+--header 'content-type: application/json' \
+--data '{"client_id":"<clientId>","client_secret":"<clientSecret>","audience":"<tenantUrl>/api/v2/","grant_type":"client_credentials"}'</textarea>
+
+      <textarea class="apiCall managementApi" id="createUserManagementApi" data-apiCallName="Create User" data-requesttype="POST" data-apiCallNameFamily="Management API" data-apiCallInformation="🚧 Create a new user using the Management API.">curl --location '<tenantUrl>/api/v2/users' \
+--header 'Authorization: Bearer <managementApiAccessToken>' \
+--header 'Content-Type: application/json' \
+--data '{
+    "email": "admin@atko.email",
+    "given_name": "Admin",
+    "family_name": "In Company 1, 2 & 3",
+    "connection": "Username-Password-Authentication",
+    "password": "Donuts11@",
+    "email_verified": true
+  }'</textarea>
+
+  
+
+      <textarea class="apiCall managementApi" id="getRoleByName" data-apiCallName="Get Role By Name" data-requesttype="GET" data-apiCallNameFamily="Management API" data-apiCallInformation="🚧 Retrieves a role ID by searching for a role name.">curl
+		--location '<tenantUrl>/api/v2/roles?name_filter=User Company 1' \
+		--header 'Authorization: Bearer <managementApiAccessToken>' \
+		--header 'Accept: application/json'</textarea>
+
+		      <textarea class="apiCall managementApi" id="assignRoleToUser" data-apiCallName="Assign Role to User" data-requesttype="POST" data-apiCallNameFamily="Management API" data-apiCallInformation="🚧 Assigns a specific role to a user.">curl --location '<tenantUrl>/api/v2/users/<userId>/roles' \
+		--header 'Authorization: Bearer <managementApiAccessToken>' \
+		--header 'Content-Type: application/json' \
+		--data '{"roles": ["<roleId>"]}'</textarea>
+
+		      <textarea class="apiCall managementApi" id="getOrganizationByName" data-apiCallName="Get Organization ID by Name" data-requesttype="GET" data-apiCallNameFamily="Management API" data-apiCallInformation="🚧 Retrieves an organization's details by its name.">curl --location '<tenantUrl>/api/v2/organizations/name/<organizationName>' \
+		--header 'Authorization: Bearer <managementApiAccessToken>' \
+		--header 'Accept: application/json'</textarea>
+
+		      <textarea class="apiCall managementApi" id="addUserToOrganization" data-apiCallName="Add User to Organization" data-requesttype="POST" data-apiCallNameFamily="Management API" data-apiCallInformation="🚧 Adds a user as a member to an organization.">curl --location '<tenantUrl>/api/v2/organizations/<organizationId>/members' \
+		--header 'Authorization: Bearer <managementApiAccessToken>' \
+		--header 'Content-Type: application/json' \
+		--data '{"members": ["<userId>"]}'</textarea>
+
+		      <textarea class="apiCall managementApi" id="addRoleToUserInOrg" data-apiCallName="Add Role to User in Organization" data-requesttype="POST" data-apiCallNameFamily="Management API" data-apiCallInformation="🚧 Assigns a role to a user specifically within an organization.">curl --location '<tenantUrl>/api/v2/organizations/<organizationId>/members/<userId>/roles' \
+		--header 'Authorization: Bearer <managementApiAccessToken>' \
+		--header 'Content-Type: application/json' \
+		--data '{"roles": ["<roleId>"]}'</textarea>
+
+		      <textarea class="apiCall ciba" id="cibaAuthenticationRequest" data-apiCallName="CIBA Authentication Request" data-requesttype="POST" data-apiCallNameFamily="CIBA" data-apiCallInformation="🚧 Initiate a Client-Initiated Backchannel Authentication (CIBA) flow. Note: the 'iss' value must end with a forward slash '/'.">curl --location '<tenantUrl>/bc-authorize' \
+		--header 'Content-Type: application/x-www-form-urlencoded' \
+		--data-urlencode 'client_id=<clientId>' \
+		--data-urlencode 'client_secret=<clientSecret>' \
+		--data-urlencode 'login_hint={ "format": "iss_sub", "iss": "<tenantUrl>/", "sub":"<userId>"}' \
+		--data-urlencode 'scope=read:messages openid profile email' \
+		--data-urlencode 'audience=<audience>' \
+		--data-urlencode 'binding_message=Confirm action' \
+		--data-urlencode 'requested_expiry=200000' \
+		--data-urlencode 'authorization_details=[{"type": "example_transaction"}]'</textarea>
+
+		      <textarea class="apiCall ciba" id="cibaTokenRequest" data-apiCallName="CIBA Token Request (Poll)" data-requesttype="POST" data-apiCallNameFamily="CIBA" data-apiCallInformation="🚧 Poll the token endpoint to complete the CIBA flow and get the tokens.">curl --location '<tenantUrl>/oauth/token' \
+		--header 'Content-Type: application/x-www-form-urlencoded' \
+		--data-urlencode 'client_id=<clientId>' \
+		--data-urlencode 'client_secret=<clientSecret>' \
+		--data-urlencode 'auth_req_id=<authReqId>' \
+		--data-urlencode 'grant_type=urn:openid:params:grant-type:ciba'</textarea>
+
+
 </div>
 
 		<div id="pf">
@@ -335,7 +397,7 @@
 
 				
 
-				<a href="#pf" id="goToProfileView" style='position: absolute; right: 30px; top: 10px; margin-right: 60px; z-index:9999; background: black; border-radius: 4px; padding:4px;'><img src="icon-user.svg" style="width:25px; filter:invert(100%);"/></a>
+				<a href="#pf" id="goToProfileView" style='position: absolute; right: 120px; top: 10px; margin-right: 0px; z-index:9999; background: black; border-radius: 4px; padding:4px;'><img src="icon-user.svg" style="width:25px; filter:invert(100%);"/></a>
 
 				<div style="clear: both;"></div>
 			</main>
@@ -404,11 +466,26 @@
 		  		<div style="clear: both"></div>
 		  	
 		  	</div>
-		    <a href="#dv" id="goToDevView" style='position: absolute; right: 30px; top: 10px; margin-right: 60px; z-index: 9999; padding:0px; background: black; border-radius: 4px;'><img src="icon-backend.svg" style='height:29px; filter: invert(100%); margin-top:3px'/></a>
+		    <a href="#dv" id="goToDevView" style='position: absolute; right: 120px; top: 10px; margin-right: 0px; z-index: 9999; padding:0px; background: black; border-radius: 4px;'><img src="icon-backend.svg" style='height:29px; filter: invert(100%); margin-top:3px'/></a>
 
 
 		  </div>
+
+		  <div id="tres" style="display: none; justify-content: center; align-items: center; height:100vh; width: 100%;position: absolute; top: 0px; left: 0px; z-index: 99999; text-align: center;">
+		  <div style="background: black; width: 400px; height: 150px; color: white; margin:auto; margin-top:5em; padding: 2em;">Environment setup</div>
+		  	<div class="grid-container" style="display: flex; justify-content: center; align-items: center;height:100vh; width: 100%;position: absolute; top: 0px; left: 0px; z-index: 99999;">
+			  <div class="new-env-item primaryColor" data-yaml="add_organization_name_to_tokens"><span class="new-env-checkbox"></span><img src="new-env.svg">Append Organization name to tokens</div>
+			  <div class="new-env-item primaryColor" data-yaml="progressive_profiling"><span class="new-env-checkbox"></span><img src="new-env.svg">Progressive Profiling</div>
+			  <div class="new-env-item primaryColor" data-yaml="mfa_email"><span class="new-env-checkbox"></span><img src="new-env.svg">MFA via email</div>
+			  <div class="new-env-item primaryColor" data-yaml="ciba"><span class="new-env-checkbox"></span><img src="new-env.svg">CIBA via email</div>
+			  <div class="new-env-item primaryColor" data-yaml="blank"></div>
+			</div>
+
+			<form class="sendYamlForm"><input style="position: absolute; bottom: 6em; left: 50%; margin-left: -80px" class="htmlButton thirdColor sendYaml" value="Execute the commands" type="submit"></form>
+		  </div>
 		</div>
+
+
 
 		<div id="loggedInUserIdTokenAndAccessToken" style="width: 500px; z-index: 999; position: absolute; right: 10px; bottom: 60px; display: none">
 			<div class="apiDivHeader" style="position: sticky; z-index:1000; border-bottom-right-radius: 0px;border-bottom-left-radius: 0px; padding-bottom: 8px; margin-bottom:0px;">User Info</div>
@@ -477,6 +554,7 @@
 						Users Session ID: <input id="sessionId" type="text" value="" class="settingsInput" /><br>
 						User ID for account linking: <input id="linkUserId" type="text" value="" class="settingsInput" /><br>
 						Account linking User ID provider: <input id="provider" type="text" value="" class="settingsInput" /><br>
+						Role ID: <input id="roleId" type="text" value="" class="settingsInput" /><br>
 						Management API Access Token: <input id="managementApiAccessToken" type="text" value="" class="settingsInput" /><br>
 						Subject Token: <input id="subjectToken" type="text" value="" class="settingsInput" /><br>
 						Subject Token Type: <input id="subjectTokenType" type="text" value="" class="settingsInput" /><br>
@@ -492,7 +570,8 @@
 									</select>-->
 				</div>
 				<div style="clear: both;"></div>
-		<div style="position: absolute; right: 30px; top: 10px; margin-right: 10px;z-index:9999; background: black; border-radius: 4px; padding: 2px;" class="showSettings"><img src="icon-settings.svg" style="width:27px; margin-top:2px; filter: invert(100%);"/></div>
+		<div style="position: absolute; right: 30px; top: 10px; margin-right: 10px;z-index:9999; background: black; border-radius: 4px; padding: 2px;"><img class="showSettings" src="icon-settings.svg" style="width:27px; margin-top:2px; filter: invert(100%);"/> </div>
+		<div id="newEnvButton" style="position: absolute; right: 70px; top: 10px; margin-right: 10px;z-index:9999; background: black; border-radius: 4px; padding: 2px;"><img src="new-env.svg" style="width:27px; margin-top:2px; filter: invert(100%);"/> </div>
 
 		<script type="text/javascript" src="resources/js/highlight.js"></script>
 		<!-- OLD 2026-02-28 <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/highlight.min.js"></script>-->

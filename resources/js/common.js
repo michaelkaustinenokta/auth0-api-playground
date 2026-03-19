@@ -383,6 +383,7 @@ $(function()
 	
 	//When submitting the curl form
     $("#curlDataForm").submit(function(e){
+
         e.preventDefault();
 		
 		//If the curl call isn't valid, show an error and stop the call before sending it to the backend
@@ -437,6 +438,40 @@ $(function()
 
 
     });
+
+    $(".sendYamlForm").submit(function(e){
+    	
+    	$(".new-env-item-selected").each(function() {
+          sendYaml($(this))
+        });
+
+		return false;
+    })
+
+    function sendYaml(yamlElement) {
+
+    	yamlElement.append("<div class='loading-yaml-insertion' style='background: white; width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 8px; position: absolute;'><br><br><br><br><br><br>Loading...</div>")
+    	
+    	yamlPath=yamlElement.attr("data-yaml")
+
+    	$.ajax({
+            url: "http://localhost:3000/auth0cli",
+            type: "get",
+            data: {yamlPath: yamlPath+".yaml",clientId: $("#clientId").val(),clientSecret: $('#modal_clientSecret').val(),tenantUrl:$('#tenantUrl').val()} ,
+            success: function (response) {
+            	yamlElement.find('.loading-yaml-insertion').hide();
+            	yamlElement.find('.new-env-checkbox').hide()
+
+				//Show the raw API response (in case the format isn't valid and the script crashes. Great error handling!
+				console.log(response)
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+               console.log(textStatus, errorThrown);
+            }
+        }).done(function( data ) {
+			    
+			  });
+    }
 	
 	//Used for changing the authtoken and more in the API calls to the configured API details
     function triggerAuthTokenChange() {
@@ -613,6 +648,7 @@ $(function()
 					if(decodedIdToken!=''){
 						$("#userId").val(decodedAccessToken.sub).change()
 						
+						
 						localStorage.setItem("loggedInUser",JSON.stringify(decodedIdToken));
 						localStorage.setItem("loggedInUserAccessToken",JSON.stringify(decodedAccessToken));
 						$(".topRightLoggedInUserNameContainer").html(JSON.parse(localStorage.getItem("loggedInUser")).name);
@@ -642,6 +678,10 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
        			console.log("Found MFA token, adding to #mfaToken")
 				$("#mfaToken").val(json.mfa_token).change()
 			}
+			if(json.hasOwnProperty('user_id')) {
+       			console.log("Found User ID, adding to #userId")
+				$("#userId").val(json.user_id).change()
+			}
 			if(json.hasOwnProperty('request_uri')) {
        			console.log("Found request_uri, adding to #requestUri")
 				$("#requestUri").val(json.request_uri).change()
@@ -656,6 +696,20 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
        			getExtraInformationFromUser('<a target="_blank" href="'+json.verification_uri_complete+'" class="htmlButton" id="continueDafFlowButton">Continue DAF flow</a>')
 				
 			}
+
+		// Extract role ID from /api/v2/roles endpoint responses
+		if ($("#curlSyntax").html().indexOf("/api/v2/roles") >= 0) {
+			// Check if response is an array (GET /api/v2/roles returns array)
+			if (Array.isArray(json) && json.length > 0 && json[0].hasOwnProperty('id')) {
+				console.log("Found Role ID from /api/v2/roles endpoint (array), adding to #roleId")
+				$("#roleId").val(json[0].id).change()
+			}
+			// Check if response is a single object (POST /api/v2/roles returns single object)
+			else if (json.hasOwnProperty('id') && json.id.startsWith('rol_')) {
+				console.log("Found Role ID from /api/v2/roles endpoint (object), adding to #roleId")
+				$("#roleId").val(json.id).change()
+			}
+		}
 
         }
 
@@ -927,6 +981,18 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 		$(document).on('click', '#goToDevView', function() {
 			localStorage.removeItem("showDos")
 		})
+
+		$(document).on('click', '#newEnvButton', function() {
+			$("#tres").toggle();
+		})
+
+		$(document).on('click', '.new-env-item', function() {
+			$(this).toggleClass("secondaryColor")
+			$(this).toggleClass("new-env-item-selected")
+			$(this).children(".new-env-checkbox").eq(0).toggle().html("&#x2713;")
+		})
+
+		
 
 		//If clicked on #pf
 		//If clicked on #dv

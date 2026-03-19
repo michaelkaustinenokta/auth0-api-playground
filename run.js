@@ -377,6 +377,27 @@ function validateDomain(urlString) {
   return true;
 }
 
+function ensureJson(data) {
+    // 1. Check if it's already an object (and not null)
+    if (typeof data === 'object' && data !== null) {
+        return JSON.stringify(data);
+    }
+
+    // 2. If it's a string, try to parse it to see if it's valid JSON
+    if (typeof data === 'string') {
+        try {
+            JSON.parse(data);
+            return data; // It's already a valid JSON string
+        } catch (e) {
+            // It's a plain string (like "Hello"), so we encode it
+            return JSON.stringify(data);
+        }
+    }
+
+    // 3. For numbers, booleans, etc.
+    return JSON.stringify(data);
+}
+
 /**
  * Execute a secure HTTP request with domain validation and SSRF protection
  * @param {Object} parsedCurl - Parsed curl object with location, headers, data
@@ -495,6 +516,12 @@ async function executeSecureRequest(parsedCurl, requestType = 'GET') {
     console.log('Response Data Length:', response.data ? response.data.length : 0);
     console.log('Response Data:', response.data);
     console.log('=====================');
+
+    // Handle 204 No Content - return success JSON instead of empty body
+    if (response.status === 204) {
+      console.log('204 No Content detected - returning success message');
+      return JSON.stringify({ Status: 'Completed' });
+    }
 
     // Return the raw response data (matching PHP behavior)
     return response.data;
