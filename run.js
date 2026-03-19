@@ -412,20 +412,21 @@ async function executeSecureRequest(parsedCurl, requestType = 'GET') {
   const method = requestType.toUpperCase();
 
   if (method === 'POST' || method === 'PATCH') {
-    // Send data as-is (axios will stringify objects automatically)
-    config.data = parsedCurl.data;
-
-    // Ensure Content-Type is set for JSON requests
+    // Handle JSON requests - explicitly stringify
     if (parsedCurl.isJsonRequest && typeof parsedCurl.data === 'object') {
+      config.data = JSON.stringify(parsedCurl.data);
       if (!config.headers) config.headers = {};
       if (!config.headers['Content-Type'] && !config.headers['content-type']) {
         config.headers['Content-Type'] = 'application/json';
       }
+    } else {
+      // Form-encoded or already a string
+      config.data = parsedCurl.data;
     }
   } else if (method === 'PUT') {
     if (parsedCurl.isJsonRequest && typeof parsedCurl.data === 'object') {
-      // JSON request - send as object
-      config.data = parsedCurl.data;
+      // JSON request - explicitly stringify
+      config.data = JSON.stringify(parsedCurl.data);
       if (!config.headers) config.headers = {};
       if (!config.headers['Content-Type'] && !config.headers['content-type']) {
         config.headers['Content-Type'] = 'application/json';
@@ -435,11 +436,21 @@ async function executeSecureRequest(parsedCurl, requestType = 'GET') {
       const dataArray = parsedCurl.data.split('&');
       config.data = dataArray[0] || parsedCurl.data;
     } else {
-      // Already an object
-      config.data = parsedCurl.data;
+      // Unknown case - stringify if object
+      config.data = typeof parsedCurl.data === 'object' ? JSON.stringify(parsedCurl.data) : parsedCurl.data;
     }
   }
   // GET and DELETE don't send body data
+
+  // Debug logging
+  console.log('=== Request Debug ===');
+  console.log('Method:', method);
+  console.log('URL:', url);
+  console.log('Headers:', JSON.stringify(config.headers, null, 2));
+  console.log('Data Type:', typeof config.data);
+  console.log('Data:', config.data);
+  console.log('Is JSON Request:', parsedCurl.isJsonRequest);
+  console.log('===================');
 
   try {
     const response = await axios(config);
