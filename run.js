@@ -10,6 +10,11 @@ const { glob } = require('glob');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const { deploy } = require('auth0-deploy-cli');
+const yaml = require('js-yaml');
+const fs = require('fs');
+
+
 // ============================================================================
 // Custom Error Classes
 // ============================================================================
@@ -178,6 +183,13 @@ function parseCurlCommand(curlString) {
       }
     }
 
+    if (cleanLine.includes('--url')) {
+      const locationMatch = cleanLine.match(/--url\s+'([^']+)'/);
+      if (locationMatch) {
+        parsed.location = locationMatch[1];
+      }
+    }
+
     // Extract --header
     if (cleanLine.includes('--header')) {
       const headerMatch = cleanLine.match(/--header\s+'([^']+)'/);
@@ -203,8 +215,42 @@ function parseCurlCommand(curlString) {
     }
   }
 
-  // Join data array with & (like PHP implode)
-  parsed.data = parsed.data.join('&');
+  // Detect JSON content-type from parsed headers
+  let isJsonRequest = false;
+  const contentTypeHeader = parsed.headers.find(h =>
+    h.toLowerCase().startsWith('content-type:')
+  );
+  if (contentTypeHeader && contentTypeHeader.toLowerCase().includes('application/json')) {
+    isJsonRequest = true;
+  }
+
+  // Smart data parsing based on content-type
+  if (isJsonRequest && parsed.data.length > 0) {
+    try {
+      if (parsed.data.length === 1) {
+        // Single JSON object - parse it
+        parsed.data = JSON.parse(parsed.data[0]);
+      } else {
+        // Multiple --data flags - merge JSON objects
+        const mergedData = {};
+        for (const dataItem of parsed.data) {
+          const parsedItem = JSON.parse(dataItem);
+          Object.assign(mergedData, parsedItem);
+        }
+        parsed.data = mergedData;
+      }
+      parsed.isJsonRequest = true; // Flag for later use
+    } catch (error) {
+      // Malformed JSON - fallback to form-encoded
+      console.warn('Failed to parse JSON data, falling back to form-encoded:', error.message);
+      parsed.data = parsed.data.join('&');
+      parsed.isJsonRequest = false;
+    }
+  } else {
+    // Form-encoded data (default) - join with &
+    parsed.data = parsed.data.join('&');
+    parsed.isJsonRequest = false;
+  }
 
   return parsed;
 }
@@ -323,14 +369,32 @@ async function executeSecureRequest(parsedCurl, requestType = 'GET') {
   const method = requestType.toUpperCase();
 
   if (method === 'POST' || method === 'PATCH') {
+    // Send data as-is (axios will stringify objects automatically)
     config.data = parsedCurl.data;
+
+    // Ensure Content-Type is set for JSON requests
+    if (parsedCurl.isJsonRequest && typeof parsedCurl.data === 'object') {
+      if (!config.headers) config.headers = {};
+      if (!config.headers['Content-Type'] && !config.headers['content-type']) {
+        config.headers['Content-Type'] = 'application/json';
+      }
+    }
   } else if (method === 'PUT') {
-    // Preserve PHP behavior: PUT uses data[0] (first data element)
-    // In our case, data is already a string, so we use it directly
-    // But to match PHP's weird behavior, we'd need to split and use first element
-    // Since data is joined with &, let's split and use first element
-    const dataArray = parsedCurl.data.split('&');
-    config.data = dataArray[0] || parsedCurl.data;
+    if (parsedCurl.isJsonRequest && typeof parsedCurl.data === 'object') {
+      // JSON request - send as object
+      config.data = parsedCurl.data;
+      if (!config.headers) config.headers = {};
+      if (!config.headers['Content-Type'] && !config.headers['content-type']) {
+        config.headers['Content-Type'] = 'application/json';
+      }
+    } else if (typeof parsedCurl.data === 'string') {
+      // Form data - preserve original behavior (use first element)
+      const dataArray = parsedCurl.data.split('&');
+      config.data = dataArray[0] || parsedCurl.data;
+    } else {
+      // Already an object
+      config.data = parsedCurl.data;
+    }
   }
   // GET and DELETE don't send body data
 
@@ -534,6 +598,86 @@ app.get('/test.php', async (req, res, next) => {
     res.status(404).json({ error: 'Not found' });
   }
 });
+
+// This handles the "GET" variables
+app.get('/auth0cli', async (req, res) => { // Added 'async' 
+  const clientId = req.query['clientId']; 
+  const clientSecret = req.query['clientSecret']; 
+  const tenantUrl = req.query['tenantUrl']; 
+
+  const yamlPath = req.query['yamlPath'];
+  
+  const config = {
+  AUTH0_DOMAIN: tenantUrl,
+  AUTH0_CLIENT_ID: clientId,
+  AUTH0_CLIENT_SECRET: clientSecret, // Use the secret from your dashboard
+  AUTH0_ALLOW_DELETE: false, // Set to true only if you want to wipe items NOT in your yaml
+  AUTH0_KEYWORD_REPLACE_MAPPINGS: {
+      PROGRESSIVE_PROFILING_FORM_ID: "PROGRESSIVE_PROFILING_FORM_1",
+      PROGRESSIVE_PROFILING_FAVORITE_STORE_ELEMENT_ID: "PROGRESSIVE_PROFILING_FAVORITE_STORE_1",
+      PROGRESSIVE_PROFILING_NEWSLETTER_PREFERENCES_ELEMENT_ID: "PROGRESSIVE_PROFILING_NEWSLETTER_PREFERENCES_1"  
+    }
+  };
+
+
+  if (!yamlPath) {
+    return res.status(400).send("Missing yamlPath parameter.");
+  }
+
+  try {
+    const fullPath = `./resources/auth0-cli/cli-commands/${yamlPath}`;
+    
+    // Check if file even exists first
+    if (!fs.existsSync(fullPath)) {
+      return res.status(404).send(`File not found: ${yamlPath}`);
+    }
+
+    const yamlToImport = fs.readFileSync(fullPath, 'utf8');
+    
+    if (isYaml(yamlToImport)) {
+      console.log("🚀 Valid YAML detected. Starting import...");
+      
+      // Wait for the import to finish
+      await importConfig(yamlPath); 
+      
+      res.send(`✅ Successfully imported: ${yamlPath}`);
+    } else {
+      res.status(400).send(`❌ Boop! The file ${yamlPath} is not valid YAML.`);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(`🔥 Server Error: ${error.message}`);
+  }
+});
+
+function isYaml(str) {
+  try {
+    // Attempt to load the string
+    const doc = yaml.load(str);
+    
+    // Check if it's an object or array (YAML usually isn't just a plain string or number)
+    return (typeof doc === 'object' && doc !== null);
+  } catch (e) {
+    // If it throws an error, it's definitely not valid YAML
+    return false;
+  }
+}
+
+async function importConfig(yamlPath) {
+
+  try {
+    
+    console.log('./cli-commands/'+yamlPath)
+    await deploy({
+      input_file: './cli-commands/'+yamlPath, // 
+      config: config,
+    });
+
+    console.log('✅ Import successful! Your tenant has been updated.');
+  } catch (err) {
+    console.error('❌ Import failed:', err);
+  }
+}
 
 // ============================================================================
 // Error Handling Middleware
