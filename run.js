@@ -177,18 +177,50 @@ function parseCurlCommand(curlString) {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    // Remove carriage returns, newlines, double spaces, and space-backslash
+
+    // When capturing multi-line data, don't apply aggressive cleaning
+    if (capturingData) {
+      // Light cleaning only - remove carriage returns and trailing backslash
+      const rawLine = line.replace(/\r/g, '');
+
+      // Check if this is the end of the data (ends with ')
+      if (rawLine.trimEnd().endsWith("'")) {
+        // Found the end - extract content before the closing quote
+        const endContent = rawLine.replace(/\s*'\s*\\?\s*$/, '');
+        if (endContent.trim()) {
+          dataBuffer.push(endContent);
+        }
+
+        // Join all captured lines - no newlines, just concatenate with space trimming
+        const dataValue = dataBuffer.join(' ').replace(/<dashdash>/g, '--').trim();
+        parsed.data.push(dataValue);
+
+        // Reset capture state
+        capturingData = false;
+        dataBuffer = [];
+        dataStartPattern = '';
+      } else {
+        // Still capturing - add trimmed line to buffer
+        const content = rawLine.replace(/\s*\\?\s*$/, '').trim();
+        if (content) {
+          dataBuffer.push(content);
+        }
+      }
+      continue;
+    }
+
+    // Remove carriage returns, newlines, double spaces, and space-backslash (for non-data lines)
     const cleanLine = line.replace(/\r/g, '').replace(/\n/g, '').replace(/  /g, '').replace(/ \\/g, '');
 
     // Extract --location
-    if (cleanLine.includes('--location') && !capturingData) {
+    if (cleanLine.includes('--location')) {
       const locationMatch = cleanLine.match(/--location\s+'([^']+)'/);
       if (locationMatch) {
         parsed.location = locationMatch[1];
       }
     }
 
-    if (cleanLine.includes('--url') && !capturingData) {
+    if (cleanLine.includes('--url')) {
       const locationMatch = cleanLine.match(/--url\s+'([^']+)'/);
       if (locationMatch) {
         parsed.location = locationMatch[1];
@@ -196,7 +228,7 @@ function parseCurlCommand(curlString) {
     }
 
     // Extract --header
-    if (cleanLine.includes('--header') && !capturingData) {
+    if (cleanLine.includes('--header')) {
       const headerMatch = cleanLine.match(/--header\s+'([^']+)'/);
       if (headerMatch) {
         parsed.headers.push(headerMatch[1]);
@@ -204,7 +236,7 @@ function parseCurlCommand(curlString) {
     }
 
     // Extract --data, --data-raw, --data-urlencode (handle multi-line)
-    if (!capturingData && (cleanLine.includes('--data-urlencode') || cleanLine.includes('--data-raw') || cleanLine.includes('--data'))) {
+    if (cleanLine.includes('--data-urlencode') || cleanLine.includes('--data-raw') || cleanLine.includes('--data')) {
       // Try to match complete data on one line first
       let dataMatch = cleanLine.match(/--data-urlencode\s+'([^']+)'/);
       if (!dataMatch) {
@@ -233,27 +265,9 @@ function parseCurlCommand(curlString) {
         const startMatch = cleanLine.match(/--data(?:-urlencode|-raw)?\s+'(.*)$/);
         if (startMatch) {
           capturingData = true;
-          dataBuffer = [startMatch[1]];
+          const startContent = startMatch[1].trim();
+          dataBuffer = startContent ? [startContent] : [];
         }
-      }
-    } else if (capturingData) {
-      // Continue capturing until we find the closing quote
-      if (cleanLine.endsWith("'")) {
-        // Found the end - remove the trailing quote and backslash if present
-        const endContent = cleanLine.replace(/'$/, '').replace(/\\$/, '');
-        dataBuffer.push(endContent);
-
-        // Join all captured lines and add to data array
-        const dataValue = dataBuffer.join('\n').replace(/<dashdash>/g, '--');
-        parsed.data.push(dataValue);
-
-        // Reset capture state
-        capturingData = false;
-        dataBuffer = [];
-        dataStartPattern = '';
-      } else {
-        // Still capturing - add this line to buffer
-        dataBuffer.push(cleanLine.replace(/\\$/, ''));
       }
     }
   }
