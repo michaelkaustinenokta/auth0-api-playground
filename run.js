@@ -171,19 +171,24 @@ function parseCurlCommand(curlString) {
     data: []
   };
 
-  for (const line of lines) {
+  let capturingData = false;
+  let dataBuffer = [];
+  let dataStartPattern = '';
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     // Remove carriage returns, newlines, double spaces, and space-backslash
     const cleanLine = line.replace(/\r/g, '').replace(/\n/g, '').replace(/  /g, '').replace(/ \\/g, '');
 
     // Extract --location
-    if (cleanLine.includes('--location')) {
+    if (cleanLine.includes('--location') && !capturingData) {
       const locationMatch = cleanLine.match(/--location\s+'([^']+)'/);
       if (locationMatch) {
         parsed.location = locationMatch[1];
       }
     }
 
-    if (cleanLine.includes('--url')) {
+    if (cleanLine.includes('--url') && !capturingData) {
       const locationMatch = cleanLine.match(/--url\s+'([^']+)'/);
       if (locationMatch) {
         parsed.location = locationMatch[1];
@@ -191,15 +196,16 @@ function parseCurlCommand(curlString) {
     }
 
     // Extract --header
-    if (cleanLine.includes('--header')) {
+    if (cleanLine.includes('--header') && !capturingData) {
       const headerMatch = cleanLine.match(/--header\s+'([^']+)'/);
       if (headerMatch) {
         parsed.headers.push(headerMatch[1]);
       }
     }
 
-    // Extract --data, --data-raw, --data-urlencode
-    if (cleanLine.includes('--data-urlencode') || cleanLine.includes('--data-raw') || cleanLine.includes('--data')) {
+    // Extract --data, --data-raw, --data-urlencode (handle multi-line)
+    if (!capturingData && (cleanLine.includes('--data-urlencode') || cleanLine.includes('--data-raw') || cleanLine.includes('--data'))) {
+      // Try to match complete data on one line first
       let dataMatch = cleanLine.match(/--data-urlencode\s+'([^']+)'/);
       if (!dataMatch) {
         dataMatch = cleanLine.match(/--data-raw\s+'([^']+)'/);
@@ -207,10 +213,47 @@ function parseCurlCommand(curlString) {
       if (!dataMatch) {
         dataMatch = cleanLine.match(/--data\s+'([^']+)'/);
       }
+
       if (dataMatch) {
-        // Restore -- that was replaced with <dashdash>
+        // Single-line data - complete match found
         const dataValue = dataMatch[1].replace(/<dashdash>/g, '--');
         parsed.data.push(dataValue);
+      } else {
+        // Multi-line data - start capturing
+        // Check which data flag was used
+        if (cleanLine.includes('--data-urlencode')) {
+          dataStartPattern = '--data-urlencode';
+        } else if (cleanLine.includes('--data-raw')) {
+          dataStartPattern = '--data-raw';
+        } else {
+          dataStartPattern = '--data';
+        }
+
+        // Extract the starting content after the opening quote
+        const startMatch = cleanLine.match(/--data(?:-urlencode|-raw)?\s+'(.*)$/);
+        if (startMatch) {
+          capturingData = true;
+          dataBuffer = [startMatch[1]];
+        }
+      }
+    } else if (capturingData) {
+      // Continue capturing until we find the closing quote
+      if (cleanLine.endsWith("'")) {
+        // Found the end - remove the trailing quote and backslash if present
+        const endContent = cleanLine.replace(/'$/, '').replace(/\\$/, '');
+        dataBuffer.push(endContent);
+
+        // Join all captured lines and add to data array
+        const dataValue = dataBuffer.join('\n').replace(/<dashdash>/g, '--');
+        parsed.data.push(dataValue);
+
+        // Reset capture state
+        capturingData = false;
+        dataBuffer = [];
+        dataStartPattern = '';
+      } else {
+        // Still capturing - add this line to buffer
+        dataBuffer.push(cleanLine.replace(/\\$/, ''));
       }
     }
   }
