@@ -390,6 +390,24 @@ async function executeSecureRequest(parsedCurl, requestType = 'GET') {
   // Replace HTML entities (matching PHP behavior)
   url = url.replace(/&amp;/g, '&');
 
+  // Properly encode URL path segments (handle special characters like | in user IDs)
+  try {
+    const urlObj = new URL(url);
+    // Split path into segments, encode each, then rejoin
+    const pathSegments = urlObj.pathname.split('/').map(segment => {
+      // Only encode if not already encoded
+      if (segment && segment !== decodeURIComponent(segment)) {
+        return segment; // Already encoded
+      }
+      return encodeURIComponent(segment);
+    });
+    urlObj.pathname = pathSegments.join('/');
+    url = urlObj.toString();
+  } catch (error) {
+    // If URL parsing fails, continue with original URL
+    console.warn('Failed to encode URL path:', error.message);
+  }
+
   validateDomain(url);
 
   // Configure axios with security options
@@ -469,9 +487,27 @@ async function executeSecureRequest(parsedCurl, requestType = 'GET') {
   try {
     const response = await axios(config);
 
+    // Log response details
+    console.log('=== Response Debug ===');
+    console.log('Status:', response.status, response.statusText);
+    console.log('Response Headers:', JSON.stringify(response.headers, null, 2));
+    console.log('Response Data Type:', typeof response.data);
+    console.log('Response Data Length:', response.data ? response.data.length : 0);
+    console.log('Response Data:', response.data);
+    console.log('=====================');
+
     // Return the raw response data (matching PHP behavior)
     return response.data;
   } catch (error) {
+    console.error('=== Request Error ===');
+    console.error('Error Code:', error.code);
+    console.error('Error Message:', error.message);
+    if (error.response) {
+      console.error('Response Status:', error.response.status);
+      console.error('Response Data:', error.response.data);
+    }
+    console.error('====================');
+
     if (error.code === 'ECONNABORTED') {
       throw new RequestError('Request timeout', 504);
     } else if (error.code === 'ECONNREFUSED') {
