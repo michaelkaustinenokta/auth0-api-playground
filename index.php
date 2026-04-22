@@ -55,7 +55,7 @@ ros pine
 
 	     	<!-- prompt=consent -->
 
-	      <textarea class="apiCall generateUserAuthenticationUrl" id="generateUserAuthenticationDbUrl" data-apiCallName="Database SSO Login" data-requesttype="getUrl" data-buttonName="Database Login"><tenantUrl>/authorize?response_type=code&connection=Username-Password-Authentication&client_id=<clientId>&redirect_uri=http%3A%2F%2Flocalhost/auth0&audience=<audience>&scope=<scope>&prompt=<promptLogin>&organization=<organization></textarea>
+	      <textarea class="apiCall generateUserAuthenticationUrl" id="generateUserAuthenticationDbUrl" data-apiCallName="Database SSO Login" data-requesttype="getUrl" data-buttonName="Database Login"><tenantUrl>/authorize?response_type=code&connection=Username-Password-Authentication&client_id=<clientId>&redirect_uri=http%3A%2F%2F<returnUrl>&audience=<audience>&scope=<scope>&prompt=<promptLogin>&organization=<organization></textarea>
 
 	      <textarea class="apiCall generateUserAuthenticationUrl" id="generateUserAuthenticationGoogleUrl" data-apiCallName="Google Login" data-requesttype="getUrl" data-buttonName="Google Login"><tenantUrl>/authorize?response_type=code&audience=<audience>&connection=google-oauth2&client_id=<clientId>&redirect_uri=<returnUrl>&scope=<scope>&prompt=<promptLogin>&organization=<organization></textarea>
 

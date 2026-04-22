@@ -420,9 +420,13 @@ input::selection {
 	background: url(/wallpaper.png);
 	background-position: left top;
 	background-size: cover;
+	background-repeat: repeat;
+	overflow: auto;
 }
 
+
 #dos {
+	overflow: auto;
   transform: rotateY(180deg);
   background: url(/horiz0n.jpg);
   background-position: center center;
@@ -612,3 +616,44 @@ background: #f3bd09; border-radius: 8px; padding: 8px; font-size: 10px; margin-b
 .secondaryColor {
 	background: rgb(68, 199, 244);
 }
+
+#tres {
+	background: url(/wallpaper.png);
+}
+.grid-container {
+  display: grid;
+  /* Skapar 3 kolumner med lika bredd */
+  grid-template-columns: repeat(3, 1fr); 
+  /* Skapar 10px mellanrum mellan rader och kolumner */
+  gap: 10px;;
+}
+
+.new-env-item {
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  width: 165px;
+  height: 165px;
+  vertical-align: bottom;
+  cursor: pointer;
+  position: relative;
+}
+
+.new-env-item-selected {
+}
+
+.new-env-checkbox {
+	display: none;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	font-size: 25px;
+}
+
+.new-env-item img {
+	width: 70px;
+	display: block;
+	margin: auto;
+	margin-bottom: 0.5em;	
+}
+

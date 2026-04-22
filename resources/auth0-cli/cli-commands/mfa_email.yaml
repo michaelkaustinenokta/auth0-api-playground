@@ -1,0 +1,36 @@
+actions:
+  - name: Trigger MFA
+    code: ./actions/Trigger MFA/code.js
+    dependencies: []
+    deployed: true
+    runtime: node22
+    secrets: []
+    status: built
+    supported_triggers:
+      - id: post-login
+        version: v3
+guardianFactors:
+  - name: duo
+    enabled: false
+  - name: email
+    enabled: true
+  - name: otp
+    enabled: false
+  - name: push-notification
+    enabled: true
+  - name: recovery-code
+    enabled: false
+  - name: sms
+    enabled: false
+  - name: webauthn-platform
+    enabled: false
+  - name: webauthn-roaming
+    enabled: false
+guardianPolicies:
+  policies: []
+guardianPhoneFactorMessageTypes:
+  message_types: []
+triggers:
+  post-login:
+    - action_name: Trigger MFA
+      display_name: Trigger MFA

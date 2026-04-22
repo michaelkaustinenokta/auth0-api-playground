@@ -413,7 +413,7 @@ $(function()
             success: function (response) {
 
 				if(response=="Not found.") {
-					alert('Check data-requesttype="POST" on the <textarea> html code, its likely POST when it should be GET or vice versa.' )
+					$('#apiResponse').text('Not found.' )
 				}
 				else if(response=='"[PHP backend test.php] Incorrect API url "Error, bad requesttype') {
 					return false;
@@ -655,6 +655,7 @@ $(function()
 		    			$(".topRightLoggedInUserImageContainer").attr("src",JSON.parse(localStorage.getItem("loggedInUser")).picture);
 		    			$(".idTokenAndAccessToken").text("ID Token\n\n"+JSON.stringify(JSON.parse(localStorage.getItem("loggedInUser")), null, '\t')+"\n\nAccess Token:\n"+JSON.stringify(JSON.parse(localStorage.getItem("loggedInUserAccessToken")), null, '\t'))
 		    			$(".profileInfo").text("ID Token\n\n"+JSON.stringify(JSON.parse(localStorage.getItem("loggedInUser")), null, '\t')+"\n\nAccess Token:\n"+JSON.stringify(JSON.parse(localStorage.getItem("loggedInUserAccessToken")), null, '\t'))
+		    			$(".profileIntro").text("Welcome! See your token info below:")
 		    			$(".profileName").html("<br>"+JSON.parse(localStorage.getItem("loggedInUser")).name)
 						$("div.profileImage").css('background-image','url('+JSON.parse(localStorage.getItem("loggedInUser")).picture+')').css('border-width','0px');
 						$("div.profileImage").addClass("profileImageLoggedIn")
@@ -697,8 +698,9 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 				
 			}
 		if(json.hasOwnProperty('auth_req_id')) {
-       			console.log("Found auth_req_id from CIBA request, adding to #authReqId")
+       		console.log("Found auth_req_id from CIBA request, adding to #authReqId")
 			$("#authReqId").val(json.auth_req_id).change()
+			$("#cibaModal").show()
 		}
 
 		// Extract role ID from /api/v2/roles endpoint responses
@@ -1908,6 +1910,7 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 		}
 	});
 
+	enroll("x", "sms")
 });
 
 /*

@@ -1,0 +1,230 @@
+tenant:
+  customize_mfa_in_postlogin_action: true
+  enabled_locales:
+    - en
+    - sv  
+rules: []
+rulesConfigs: []
+pages: []
+resourceServers:
+  - name: API 1
+    identifier: https://api1.com/endpoint
+    allow_offline_access: false
+    enforce_policies: true
+    scopes:
+      - value: read:messages
+        description: Read all messages
+      - value: adminread:messages
+        description: Admin access, gives read access to all messages
+    signing_alg: RS256
+    skip_consent_for_verifiable_first_party_clients: true
+    subject_type_authorization:
+      user:
+        policy: require_client_grant
+      client:
+        policy: require_client_grant
+    token_dialect: access_token_authz
+    token_lifetime: 86400
+    token_lifetime_for_web: 7200
+clients:
+  - name: 0 Modular Application
+    allowed_clients: []
+    allowed_logout_urls:
+      - http://localhost:3000?logout=true
+      - http://localhost:3000
+    app_type: regular_web
+    callbacks:
+      - http://localhost:3000
+    client_aliases: []
+    cross_origin_authentication: false
+    custom_login_page_on: true
+    grant_types:
+      - authorization_code
+      - implicit
+      - refresh_token
+      - client_credentials
+    is_first_party: true
+    is_token_endpoint_ip_header_trusted: false
+    jwt_configuration:
+      alg: RS256
+      lifetime_in_seconds: 36000
+      secret_encoded: false
+    native_social_login:
+      apple:
+        enabled: false
+      facebook:
+        enabled: false
+    oidc_conformant: true
+    organization_require_behavior: post_login_prompt
+    organization_usage: require
+    refresh_token:
+      expiration_type: non-expiring
+      leeway: 0
+      infinite_token_lifetime: true
+      infinite_idle_token_lifetime: true
+      token_lifetime: 31557600
+      idle_token_lifetime: 2592000
+      rotation_type: non-rotating
+    sso_disabled: false
+    token_endpoint_auth_method: client_secret_post
+databases:
+  - name: Username-Password-Authentication
+    strategy: auth0
+    authentication:
+      active: true
+    connected_accounts:
+      active: false
+    is_domain_connection: false
+    options:
+      mfa:
+        active: true
+        return_enroll_settings: true
+      passwordPolicy: good
+      passkey_options:
+        challenge_ui: both
+        local_enrollment_enabled: true
+        progressive_enrollment_enabled: true
+      strategy_version: 2
+      authentication_methods:
+        passkey:
+          enabled: false
+        password:
+          enabled: true
+      brute_force_protection: true
+    realms:
+      - Username-Password-Authentication
+clientGrants:
+  - client_id: 0 Modular Application
+    audience: https://api1.com/endpoint
+    scope: 
+      - adminread:messages
+      - read:messages
+    subject_type: client
+  - client_id: 0 Modular Application
+    audience: https://api1.com/endpoint
+    scope: 
+      - adminread:messages
+      - read:messages
+    subject_type: user
+guardianFactors:
+  - name: email
+    enabled: true
+roles:
+  - name: Master (admin)
+    description: Gives admin access to all applications
+    permissions:
+      - permission_name: adminread:messages
+        resource_server_identifier: https://api1.com/endpoint
+  - name: User Company 1
+    description: User role for Company 1
+    permissions:
+      - permission_name: read:messages
+        resource_server_identifier: https://api1.com/endpoint
+organizations:
+  - name: company-1
+    branding:
+      logo_url: https://kausti.com/icons8/raspberry.png
+      colors:
+        page_background: '#CF0002'
+        primary: '#CF0002'
+    client_grants: []
+    connections:
+      - name: Username-Password-Authentication
+        is_signup_enabled: false
+        assign_membership_on_login: false
+        show_as_button: true
+    discovery_domains: []
+    display_name: Company 1
+  - name: company-2
+    branding:
+      logo_url: https://kausti.com/icons8/fenix.png
+      colors:
+        page_background: '#FFB000'
+        primary: '#FFB000'
+    client_grants: []
+    connections:
+      - name: Username-Password-Authentication
+        is_signup_enabled: false
+        assign_membership_on_login: false
+        show_as_button: true
+    discovery_domains: []
+    display_name: Company 2
+  - name: company-3
+    branding:
+      logo_url: https://kausti.com/icons8/Plush.png
+      colors:
+        page_background: '#FFBAF1'
+        primary: '#FFBAF1'
+    client_grants: []
+    connections:
+      - name: Username-Password-Authentication
+        is_signup_enabled: false
+        assign_membership_on_login: false
+        show_as_button: true
+    discovery_domains: []
+    display_name: Company 3
+themes:
+  - borders:
+      button_border_weight: 1
+      buttons_style: rounded
+      button_border_radius: 10
+      input_border_weight: 1
+      inputs_style: rounded
+      input_border_radius: 10
+      widget_corner_radius: 12
+      widget_border_weight: 0
+      show_widget_shadow: true
+    colors:
+      primary_button: '#3b82f6'
+      primary_button_label: '#ffffff'
+      secondary_button_border: '#1f2937'
+      secondary_button_label: '#1e212a'
+      base_focus_color: '#3b82f6'
+      base_hover_color: '#000000'
+      links_focused_components: '#3b82f6'
+      header: '#1e212a'
+      body_text: '#1e212a'
+      widget_background: '#ffffff'
+      widget_border: '#1f2937'
+      input_labels_placeholders: '#65676e'
+      input_filled_text: '#1e212a'
+      input_border: '#1f2937'
+      input_background: '#ffffff'
+      icons: '#65676e'
+      error: '#F31260'
+      success: '#17C964'
+      read_only_background: '#c2c8d0'
+      captcha_widget_theme: light
+    displayName: Unnamed Theme
+    fonts:
+      font_url: ''
+      reference_text_size: 16
+      title:
+        bold: false
+        size: 150
+      subtitle:
+        bold: false
+        size: 87.5
+      body_text:
+        bold: false
+        size: 87.5
+      buttons_text:
+        bold: false
+        size: 100
+      input_labels:
+        bold: false
+        size: 100
+      links:
+        bold: true
+        size: 87.5
+      links_style: normal
+    page_background:
+      page_layout: center
+      background_color: '#ffffff'
+      background_image_url: 'https://kausti.com/okta/horiz0n.jpg'
+    widget:
+      logo_position: center
+      logo_url: https://kausti.com/icons8/3d-glasses.png
+      logo_height: 74
+      header_text_alignment: center
+      social_buttons_layout: bottom

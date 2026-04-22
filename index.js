@@ -10,6 +10,22 @@ const { glob } = require('glob');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const { deploy } = require('auth0-deploy-cli');
+const yaml = require('js-yaml');
+const fs = require('fs');
+
+const config = {
+  AUTH0_DOMAIN: 'sandbox-kaustinen.cic-demo-platform.auth0app.com',
+  AUTH0_CLIENT_ID: 'gOz2nNzgnjW8apFRLfRARESNDyZ5gbdI',
+  AUTH0_CLIENT_SECRET: 'x63490DCmu9HY5gRIUbdNpMGcUUYqPQQJlZ07jSH3V2USdp0XJipbhr-YYG5XvvU', // Use the secret from your dashboard
+  AUTH0_ALLOW_DELETE: false, // Set to true only if you want to wipe items NOT in your yaml
+  AUTH0_KEYWORD_REPLACE_MAPPINGS: {
+    PROGRESSIVE_PROFILING_FORM_ID: "PROGRESSIVE_PROFILING_FORM_1",
+    PROGRESSIVE_PROFILING_FAVORITE_STORE_ELEMENT_ID: "PROGRESSIVE_PROFILING_FAVORITE_STORE_1",
+    PROGRESSIVE_PROFILING_NEWSLETTER_PREFERENCES_ELEMENT_ID: "PROGRESSIVE_PROFILING_NEWSLETTER_PREFERENCES_1"  
+  }
+};
+
 // ============================================================================
 // Custom Error Classes
 // ============================================================================
@@ -140,6 +156,72 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+
+// This handles the "GET" variables
+app.get('/auth0cli', async (req, res) => { // Added 'async'
+  console.log(1)
+  res.send('✅ Successfully');
+  const yamlPath = req.query['yamlPath']; 
+  
+  if (!yamlPath) {
+    return res.status(400).send("Missing yamlPath parameter.");
+  }
+
+  try {
+    const fullPath = `./resources/auth0-cli/cli-commands/${yamlPath}`;
+    
+    // Check if file even exists first
+    if (!fs.existsSync(fullPath)) {
+      return res.status(404).send(`File not found: ${yamlPath}`);
+    }
+
+    const yamlToImport = fs.readFileSync(fullPath, 'utf8');
+    
+    if (isYaml(yamlToImport)) {
+      console.log("🚀 Valid YAML detected. Starting import...");
+      
+      // Wait for the import to finish
+      await importConfig(yamlPath); 
+      
+      res.send(`✅ Successfully imported: ${yamlPath}`);
+    } else {
+      res.status(400).send(`❌ Boop! The file ${yamlPath} is not valid YAML.`);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(`🔥 Server Error: ${error.message}`);
+  }
+});
+
+function isYaml(str) {
+  try {
+    // Attempt to load the string
+    const doc = yaml.load(str);
+    
+    // Check if it's an object or array (YAML usually isn't just a plain string or number)
+    return (typeof doc === 'object' && doc !== null);
+  } catch (e) {
+    // If it throws an error, it's definitely not valid YAML
+    return false;
+  }
+}
+
+async function importConfig(yamlPath) {
+
+  try {
+    
+    console.log('./resources/auth0-cli/cli-commands/'+yamlPath)
+    await deploy({
+      input_file: './resources/auth0-cli/cli-commands/'+yamlPath, // 
+      config: config,
+    });
+
+    console.log('✅ Import successful! Your tenant has been updated.');
+  } catch (err) {
+    console.error('❌ Import failed:', err);
+  }
+}
 
 // Serve static files (HTML, CSS, JS, images, etc.)
 app.use(express.static(__dirname, {
@@ -390,6 +472,18 @@ app.get('/api', (_req, res) => {
         body: {
           curlData: 'string (required) - cURL command string',
           requestType: 'string (optional) - HTTP method: GET, POST, PUT, PATCH, DELETE'
+        },
+        example: {
+          curlData: "curl --location 'https://dev.auth0app.com/api/v2/users' --header 'Authorization: Bearer token'",
+          requestType: 'GET'
+        }
+      },
+      auth0cli: {
+        method: 'POST',
+        path: '/auth0cli',
+        description: 'Auth0 CLI endpoint',
+        body: {
+          yamlPath: 'string (required) - Yaml file to import'
         },
         example: {
           curlData: "curl --location 'https://dev.auth0app.com/api/v2/users' --header 'Authorization: Bearer token'",
@@ -647,6 +741,7 @@ app.use((err, req, res, next) => {
     timestamp: timestamp
   });
 });
+
 
 /**
  * 404 handler

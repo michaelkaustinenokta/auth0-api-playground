@@ -8,7 +8,9 @@
 			<script src="resources/js/jquery.min.js" type="text/javascript"></script>
 			<script src="resources/js/highlight.pack.js" type="text/javascript"></script>
 			<script src="resources/js/common.js" type="text/javascript"></script>
-			<script src="resources/js/curl-to-php.js" type="text/javascript"></script>			
+			<script src="resources/js/curl-to-php.js" type="text/javascript"></script>	
+			<script src="resources/js/ciba-common.js" type="text/javascript"></script>
+				
 			<!--<link rel="stylesheet" href="resources/css/color-brewer.css">-->
 	    <link rel="stylesheet" href="resources/css/common.css">
 
@@ -148,7 +150,7 @@
 --data-urlencode 'otp=<otp>'</textarea>
 -->
 
-			<textarea class="apiCall generateUserAuthorizationUrl" id="generateUserAuthorizationUrl" data-apiCallName="Request User Authorization (Authorization Code Flow)" data-apiCallNameFamily="Authorization" data-requesttype="getUrl" data-buttonName="Authorization Code Flow" data-apiCallInformation="Generate User Authorization URL via the Authorization Code flow: "><tenantUrl>/authorize?audience=https://localhost/auth0api&scope=read:appointments&response_type=code&client_id=<clientId>&prompt=<promptLogin>&organization=<organization>&connection=<connection>&redirect_uri=http%3A%2F%2Flocalhost%2Fauth0</textarea>
+			<textarea class="apiCall generateUserAuthorizationUrl" id="generateUserAuthorizationUrl" data-apiCallName="Request User Authorization (Authorization Code Flow)" data-apiCallNameFamily="Authorization" data-requesttype="getUrl" data-buttonName="Authorization Code Flow" data-apiCallInformation="Generate User Authorization URL via the Authorization Code flow: "><tenantUrl>/authorize?audience=https://localhost/auth0api&scope=read:appointments&response_type=code&client_id=<clientId>&prompt=<promptLogin>&organization=<organization>&connection=<connection>&redirect_uri=<returnUrl></textarea>
 
 			<!-- ⚠️ This call will not work unless your application type is SAP in the Auth0 Dashboard! --> 
 			<textarea class="apiCall generateUserAuthorizationUrl" id="generateUserAuthorizationPkceUrl" data-apiCallName="Request User Authorization (PKCE)" data-requesttype="getUrl"  data-buttonName="Request User Authorization (PKCE)" data-apiCallInformation="Request User Authorization using PKCE:">
@@ -285,7 +287,17 @@
 		--header 'Content-Type: application/json' \
 		--data '{"roles": ["<roleId>"]}'</textarea>
 
-		      <textarea class="apiCall ciba" id="cibaAuthenticationRequest" data-apiCallName="CIBA Authentication Request" data-requesttype="POST" data-apiCallNameFamily="CIBA" data-apiCallInformation="🚧 Initiate a Client-Initiated Backchannel Authentication (CIBA) flow. Note: the 'iss' value must end with a forward slash '/'.">curl --location '<tenantUrl>/bc-authorize' \
+		<textarea class="apiCall a4aa" id="tokenVaultInitiation" data-apiCallName="Token Vault Initiation" data-requesttype="POST" data-apiCallNameFamily="Auth0 for AI Agents" data-apiCallInformation="🚧 Initiate the Token Vault login.">
+			curl --location '<tenantUrl>/oauth/token' \
+			--header 'content-type: application/x-www-form-urlencoded' \
+			--data-urlencode 'grant_type=authorization_code' \
+			--data-urlencode 'client_id=<clientId>' \
+			--data-urlencode 'client_secret=<clientSecret>' \
+			--data-urlencode 'code=<code>' \
+			--data-urlencode 'redirect_uri=<returnUrl>'
+			</textarea>
+
+		      <textarea class="apiCall a4aa" id="cibaAuthenticationRequest" data-apiCallName="CIBA Authentication Request" data-requesttype="POST" data-apiCallNameFamily="Auth0 for AI Agents" data-apiCallInformation="🚧 Initiate a Client-Initiated Backchannel Authentication (CIBA) flow. Note: the 'iss' value must end with a forward slash '/'.">curl --location '<tenantUrl>/bc-authorize' \
 		--header 'Content-Type: application/x-www-form-urlencoded' \
 		--data-urlencode 'client_id=<clientId>' \
 		--data-urlencode 'client_secret=<clientSecret>' \
@@ -306,7 +318,7 @@
       "subject": "A Lannister Always Pays His Debts"
     }]'</textarea>
 
-		      <textarea class="apiCall ciba" id="cibaTokenRequest" data-apiCallName="CIBA Token Request (Poll)" data-requesttype="POST" data-apiCallNameFamily="CIBA" data-apiCallInformation="🚧 Poll the token endpoint to complete the CIBA flow and get the tokens.">curl --location '<tenantUrl>/oauth/token' \
+		      <textarea class="apiCall a4aa" id="cibaTokenRequest" data-apiCallName="CIBA Token Request (Poll)" data-requesttype="POST" data-apiCallNameFamily="Auth0 for AI Agents" data-apiCallInformation="🚧 Poll the token endpoint to complete the CIBA flow and get the tokens.">curl --location '<tenantUrl>/oauth/token' \
 		--header 'Content-Type: application/x-www-form-urlencoded' \
 		--data-urlencode 'client_id=<clientId>' \
 		--data-urlencode 'client_secret=<clientSecret>' \
@@ -336,6 +348,7 @@
 
 
 			<main>
+<!--<div id="cibaModal" style="position: absolute; top:10%; left: 50%; z-index: 9998; font-family: Monospace !important;  border-radius: 48px;" class=""><img src="ciba-color.png" style="height: 450px;"><div ></div><span style="color: white">auth0-guardian-js</span></div>-->
 
 				<div style="position: absolute; left: 260px; top: 20px; z-index: 199;">
 						  <form id="curlDataForm" class="language-curl" style="padding: 3em; border-radius: 10px	;">
@@ -463,9 +476,7 @@
 		  		<div style="float: left; width: 650px; margin-left: 50px;">
 			  		<div class="profileDetailsHeader secondaryColor" style="border-top-left-radius: 8px; border-top-right-radius: 8px; padding: 8px; font-size: 10px; padding-bottom:2em; margin-top:1em; width: 100%; height: 1em;">Profile</div>
 			  		<div id="profileDetailsDiv" style="min-height: 500px;border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; background: #1f1f1f;width: 100%; color: white; padding: 10px; height: auto; overflow-x: auto;" >
-			  			<span class="profileIntro">Welcome!
-
-			  		Feel free to login.</span>
+			  			<span class="profileIntro">Welcome!</span>
 			  			<!--<pre style="width: 100%; margin-top: 0px; padding-top: 0px"><code class="tokenInfo language-json" style="width: 100%; overflow: hidden;"></code></pre>--><br><br>
 			  			
 			  			<pre style="width: 100%; overflow-wrap: break-word;"><code class="profileInfo language-json" style="width: 100%;"></code></pre>

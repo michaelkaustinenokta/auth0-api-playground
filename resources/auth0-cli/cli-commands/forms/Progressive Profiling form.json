@@ -1,0 +1,106 @@
+{
+  "name": "Progressive Profiling form",
+  "languages": {
+    "primary": "en"
+  },
+  "nodes": [
+    {
+      "id": "step_9h6x",
+      "type": "STEP",
+      "coordinates": {
+        "x": 84,
+        "y": -172
+      },
+      "alias": "New step",
+      "config": {
+        "components": [
+          {
+            "id": "##PROGRESSIVE_PROFILING_FORM_ID##",
+            "category": "BLOCK",
+            "type": "RICH_TEXT",
+            "config": {
+              "content": "<p>Welcome back {{fields.first_name}}</p><p></p><p>We'd like to know more about you, please give us some more information:</p>"
+            }
+          },
+          {
+            "id": "##PROGRESSIVE_PROFILING_FAVORITE_STORE_ELEMENT_ID##",
+            "category": "FIELD",
+            "type": "DROPDOWN",
+            "label": "Favorite Merchant0 store",
+            "required": false,
+            "sensitive": false,
+            "config": {
+              "multiple": false,
+              "options": [
+                {
+                  "label": "Stockholm",
+                  "value": "Stockholm"
+                },
+                {
+                  "label": "Copenhagen",
+                  "value": "Copenhagen"
+                },
+                {
+                  "label": "Oslo",
+                  "value": "Oslo"
+                }
+              ]
+            }
+          },
+          {
+            "id": "##PROGRESSIVE_PROFILING_NEWSLETTER_PREFERENCES_ELEMENT_ID##",
+            "category": "FIELD",
+            "type": "DROPDOWN",
+            "label": "Favorite topics for our newsletter",
+            "required": false,
+            "sensitive": false,
+            "config": {
+              "multiple": false,
+              "options": [
+                {
+                  "label": "New product lines",
+                  "value": "New product lines"
+                },
+                {
+                  "label": "Limited edition releases",
+                  "value": "Limited edition releases"
+                },
+                {
+                  "label": "Industry Trends & News",
+                  "value": "Industry Trends & News"
+                },
+                {
+                  "label": "Expert Tips & Tutorials",
+                  "value": "Expert Tips & Tutorials"
+                }
+              ]
+            }
+          },
+          {
+            "id": "next_button_E3bf",
+            "category": "BLOCK",
+            "type": "NEXT_BUTTON",
+            "config": {
+              "text": "Continue"
+            }
+          }
+        ],
+        "next_node": "$ending"
+      }
+    }
+  ],
+  "start": {
+    "next_node": "step_9h6x",
+    "coordinates": {
+      "x": -207,
+      "y": -18
+    }
+  },
+  "ending": {
+    "resume_flow": true,
+    "coordinates": {
+      "x": 732,
+      "y": -14
+    }
+  }
+}
