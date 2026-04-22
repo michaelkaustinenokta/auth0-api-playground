@@ -1313,12 +1313,34 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 		}
 
 
+		// Function to ensure container is scrollable when JWT boxes are visible
+		function ensureScrollableContainer() {
+			const accessTokenVisible = $("#jwtDisplayerAccessToken").is(":visible");
+			const idTokenVisible = $("#jwtDisplayerIdToken").is(":visible");
+
+			// Get the main container
+			const mainContainer = $("#curlDataForm").parent();
+
+			if (accessTokenVisible || idTokenVisible) {
+				// Make container scrollable when JWT boxes are visible
+				mainContainer.css({
+					'overflow-y': 'auto',
+					'overflow-x': 'auto',
+					'max-height': 'calc(100vh - 40px)'
+				});
+			}
+		}
+
 		$(document).on('click', '.showJwtDisplayerButton', function() {
 			$("#"+$(this).attr("id").replace("Button","")).toggle();
+			// Ensure scrolling after toggle
+			setTimeout(ensureScrollableContainer, 100);
 		})
 
 		$(document).on('click', '.closeJwtDisplayer', function() {
-			$(this).parents(".jwtDisplayer").hide()
+			$(this).parents(".jwtDisplayer").hide();
+			// Check scrolling after hiding
+			setTimeout(ensureScrollableContainer, 100);
 		})
 
 		$(document).on('click', '.topRightLogout', function() {
