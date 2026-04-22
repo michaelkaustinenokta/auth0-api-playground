@@ -1324,9 +1324,16 @@ https://kaustinen.cic-demo-platform.auth0app.com/authorize?response_type=code&cl
 			if (accessTokenVisible || idTokenVisible) {
 				// Make container scrollable when JWT boxes are visible
 				mainContainer.css({
-					'overflow-y': 'auto',
+					'overflow-y': 'scroll',
 					'overflow-x': 'auto',
-					'max-height': 'calc(100vh - 40px)'
+					'max-height': 'calc(100vh - 40px)',
+					'height': 'calc(100vh - 40px)'
+				});
+
+				// Also ensure the form itself doesn't have overflow issues
+				$("#curlDataForm").css({
+					'overflow': 'visible',
+					'height': 'auto'
 				});
 			}
 		}
