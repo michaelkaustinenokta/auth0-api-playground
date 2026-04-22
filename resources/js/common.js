@@ -45,6 +45,72 @@ partner@partner.com
 $(function()
 {
 
+	// Make JWT content boxes draggable
+	function makeDraggable(element) {
+		let isDragging = false;
+		let currentX;
+		let currentY;
+		let initialX;
+		let initialY;
+		let xOffset = 0;
+		let yOffset = 0;
+
+		const header = element.querySelector('.apiDivHeader');
+
+		if (!header) return;
+
+		// Reset position on load
+		element.style.position = 'relative';
+		element.style.left = '0px';
+		element.style.top = '0px';
+		element.style.cursor = 'default';
+		header.style.cursor = 'move';
+
+		header.addEventListener('mousedown', dragStart);
+		document.addEventListener('mousemove', drag);
+		document.addEventListener('mouseup', dragEnd);
+
+		function dragStart(e) {
+			initialX = e.clientX - xOffset;
+			initialY = e.clientY - yOffset;
+
+			if (e.target === header) {
+				isDragging = true;
+			}
+		}
+
+		function drag(e) {
+			if (isDragging) {
+				e.preventDefault();
+
+				currentX = e.clientX - initialX;
+				currentY = e.clientY - initialY;
+
+				xOffset = currentX;
+				yOffset = currentY;
+
+				setTranslate(currentX, currentY, element);
+			}
+		}
+
+		function dragEnd(e) {
+			initialX = currentX;
+			initialY = currentY;
+			isDragging = false;
+		}
+
+		function setTranslate(xPos, yPos, el) {
+			el.style.transform = 'translate3d(' + xPos + 'px, ' + yPos + 'px, 0)';
+		}
+	}
+
+	// Initialize draggable on JWT boxes
+	const accessTokenBox = document.getElementById('jwtDisplayerAccessToken');
+	const idTokenBox = document.getElementById('jwtDisplayerIdToken');
+
+	if (accessTokenBox) makeDraggable(accessTokenBox);
+	if (idTokenBox) makeDraggable(idTokenBox);
+
 	var getUrlParameter = function getUrlParameter(sParam) {
     var sPageURL = window.location.search.substring(1),
         sURLVariables = sPageURL.split('&'),
